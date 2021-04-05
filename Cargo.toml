@@ -1,0 +1,21 @@
+[package]
+name = "libwifi"
+description = "A cli tool for managing long running shell commands."
+version = "0.1.0"
+authors = ["Arne Beer <contact@arne.beer>"]
+edition = "2018"
+
+homepage = "https://github.com/nukesor/libwifi"
+repository = "https://github.com/nukesor/libwifi"
+documentation = "https://docs.rs/libwifi/"
+license = "MIT"
+keywords = ["wifi", "802.11", "parser", "frame"]
+readme = "README.md"
+
+[dependencies]
+anyhow = "1"
+log = "0.4"
+nom = "6"
+bytes = "0.4"
+byteorder = "1"
+pcap = { version = "0.8", features = ['capture-stream'] }
