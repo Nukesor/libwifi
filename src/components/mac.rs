@@ -1,19 +1,23 @@
+use std::fmt;
+
 /// This is our representation of a MAC-address
 #[derive(Clone, Debug)]
 pub struct MacAddress(pub [u8; 6]);
 
 impl MacAddress {
-    /// Return the MacAddress' bytes in easily readable Hex-code
-    pub fn to_string(&self) -> String {
-        format!(
-            "{:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
-            self.0[0], self.0[1], self.0[2], self.0[3], self.0[4], self.0[5]
-        )
-    }
-
     /// Check whether this MAC addresses the whole network.
     pub fn is_broadcast(&self) -> bool {
         self.0 == [255, 255, 255, 255, 255, 255]
+    }
+}
+
+impl fmt::Display for MacAddress {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
+            self.0[0], self.0[1], self.0[2], self.0[3], self.0[4], self.0[5]
+        )
     }
 }
 

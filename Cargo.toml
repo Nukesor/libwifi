@@ -13,9 +13,5 @@ keywords = ["wifi", "802.11", "parser", "frame"]
 readme = "README.md"
 
 [dependencies]
-anyhow = "1"
 log = "0.4"
 nom = "6"
-bytes = "0.4"
-byteorder = "1"
-pcap = { version = "0.8", features = ['capture-stream'] }

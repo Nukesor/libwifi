@@ -31,9 +31,9 @@ pub enum FrameSubType {
     BlockAckRequest,
     BlockAck,
     PsPoll,
-    RTS,
-    CTS,
-    ACK,
+    Rts,
+    Cts,
+    Ack,
     CfEnd,
     CfEndCfAck,
 

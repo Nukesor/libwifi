@@ -11,7 +11,7 @@ pub struct AssociationRequest {
     pub header: Header,
     pub beacon_interval: u16,
     pub capability_info: u16,
-    pub ssid: SSID,
+    pub ssid: Ssid,
     pub station_info: StationInfo,
 }
 
@@ -24,8 +24,8 @@ impl AssociationRequest {
             input,
             AssociationRequest {
                 header,
-                capability_info,
                 beacon_interval,
+                capability_info,
                 ssid,
                 station_info,
             },

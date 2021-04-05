@@ -18,9 +18,7 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
         match element_id {
             1 => response_info.supported_rates = parse_supported_rates(data),
             _ => {
-                response_info
-                    .data
-                    .insert(element_id, data.clone().to_owned());
+                response_info.data.insert(element_id, data.to_vec());
             }
         };
     }

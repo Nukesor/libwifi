@@ -12,7 +12,7 @@ pub struct Beacon {
     pub timestamp: u64,
     pub beacon_interval: u16,
     pub capability_info: u16,
-    pub ssid: SSID,
+    pub ssid: Ssid,
     pub station_info: StationInfo,
 }
 

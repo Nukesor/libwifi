@@ -8,7 +8,7 @@ use crate::traits::*;
 #[derive(Clone, Debug)]
 pub struct ProbeRequest {
     pub header: Header,
-    pub ssid: SSID,
+    pub ssid: Ssid,
     pub station_info: StationInfo,
 }
 
