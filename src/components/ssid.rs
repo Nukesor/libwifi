@@ -1,6 +1,7 @@
-use std::io::Cursor;
-
-use bytes::{Buf, Bytes};
+use nom::bytes::complete::take;
+use nom::number::complete::u8 as get_u8;
+use nom::sequence::tuple;
+use nom::IResult;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct SSID {
@@ -10,18 +11,17 @@ pub struct SSID {
 }
 
 impl SSID {
-    pub fn parse(input: &[u8]) -> SSID {
-        let mut cursor = Cursor::new(input);
+    pub fn parse(input: &[u8]) -> IResult<&[u8], SSID> {
+        let (input, (element_id, ssid_len)) = tuple((get_u8, get_u8))(input)?;
+        let (input, ssid) = take(ssid_len)(input)?;
 
-        let element_id = cursor.get_u8();
-        let ssid_len = cursor.get_u8() as usize;
-        let mut buf = Bytes::from(cursor.bytes());
-        let ssid = buf.split_to(ssid_len);
-
-        SSID {
-            element_id,
-            ssid_len,
-            value: String::from_utf8(ssid.to_vec()).unwrap_or_else(|_| "".to_string()),
-        }
+        Ok((
+            input,
+            SSID {
+                element_id,
+                ssid_len: ssid_len as usize,
+                value: String::from_utf8_lossy(ssid).to_string(),
+            },
+        ))
     }
 }

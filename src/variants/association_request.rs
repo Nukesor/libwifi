@@ -1,38 +1,35 @@
-use std::io::Cursor;
-
-use bytes::Buf;
+use nom::number::complete::le_u16;
+use nom::sequence::tuple;
+use nom::IResult;
 
 use crate::components::*;
-use crate::parsers::parse_header;
+use crate::parsers::{parse_header, parse_ssid, parse_station_info};
 use crate::traits::*;
-use crate::variants::extractors::supported_rates;
 
 #[derive(Clone, Debug)]
 pub struct AssociationRequest {
     pub header: Header,
-    pub cap_info: u16,
-    pub interval: u16,
+    pub beacon_interval: u16,
+    pub capability_info: u16,
     pub ssid: SSID,
-    pub supported_rates: Vec<f32>,
+    pub station_info: StationInfo,
 }
 
 impl AssociationRequest {
-    pub fn parse(input: &[u8]) -> AssociationRequest {
-        let (input, header) = parse_header(input).unwrap();
-        let mut cursor = Cursor::new(input);
+    pub fn parse(input: &[u8]) -> IResult<&[u8], AssociationRequest> {
+        let (input, (header, beacon_interval, capability_info, ssid, station_info)) =
+            tuple((parse_header, le_u16, le_u16, parse_ssid, parse_station_info))(input)?;
 
-        let cap_info = cursor.get_u16_le();
-        let interval = cursor.get_u16_le();
-        let ssid = SSID::parse(cursor.bytes());
-        cursor.advance(ssid.ssid_len + 2);
-
-        AssociationRequest {
-            header,
-            cap_info,
-            interval,
-            ssid,
-            supported_rates: supported_rates(cursor.bytes()),
-        }
+        Ok((
+            input,
+            AssociationRequest {
+                header,
+                capability_info,
+                beacon_interval,
+                ssid,
+                station_info,
+            },
+        ))
     }
 }
 

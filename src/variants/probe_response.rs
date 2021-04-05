@@ -1,49 +1,44 @@
-use std::io::Cursor;
-
-use bytes::Buf;
+use nom::number::complete::{le_u16, le_u64};
+use nom::sequence::tuple;
+use nom::IResult;
 
 use crate::components::*;
-use crate::parsers::parse_header;
+use crate::parsers::{parse_header, parse_ssid, parse_station_info};
 use crate::traits::*;
-use crate::variants::extractors::*;
 
 #[derive(Clone, Debug)]
 pub struct ProbeResponse {
     pub header: Header,
     pub timestamp: u64,
-    pub interval: u16,
-    pub cap_info: u16,
+    pub beacon_interval: u16,
+    pub capability_info: u16,
     pub ssid: SSID,
-    pub supported_rates: Vec<f32>,
-    pub current_channel: u8,
-    pub country: Country,
+    pub station_info: StationInfo,
 }
 
 impl ProbeResponse {
-    pub fn parse(input: &[u8]) -> ProbeResponse {
-        let (input, header) = parse_header(input).unwrap();
-        let mut cursor = Cursor::new(input);
+    pub fn parse(input: &[u8]) -> IResult<&[u8], ProbeResponse> {
+        let (input, (header, timestamp, beacon_interval, capability_info, ssid, station_info)) =
+            tuple((
+                parse_header,
+                le_u64,
+                le_u16,
+                le_u16,
+                parse_ssid,
+                parse_station_info,
+            ))(input)?;
 
-        let timestamp = cursor.get_u64_le();
-        let interval = cursor.get_u16_le();
-        let cap_info = cursor.get_u16_le();
-
-        let ssid = SSID::parse(cursor.bytes());
-        cursor.advance(ssid.ssid_len + 2); // 2 accounts for Id + Len
-        let supported_rates = supported_rates(cursor.bytes());
-        cursor.advance(supported_rates.len() + 2); // 2 accounts for Id + Len
-        let info = get_info(cursor.bytes());
-
-        ProbeResponse {
-            header,
-            timestamp,
-            interval,
-            cap_info,
-            ssid,
-            supported_rates,
-            current_channel: info.current_channel,
-            country: info.country,
-        }
+        Ok((
+            input,
+            ProbeResponse {
+                header,
+                timestamp,
+                beacon_interval,
+                capability_info,
+                ssid,
+                station_info,
+            },
+        ))
     }
 }
 

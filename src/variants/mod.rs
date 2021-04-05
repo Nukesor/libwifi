@@ -1,3 +1,5 @@
+use nom::IResult;
+
 pub mod association_request;
 pub mod association_response;
 pub mod beacon;
@@ -9,10 +11,6 @@ pub use association_response::AssociationResponse;
 pub use beacon::Beacon;
 pub use probe_request::ProbeRequest;
 pub use probe_response::ProbeResponse;
-
-/// This contains helper functions that are used to interpret and extract information from a byte
-/// array. These should only be used internally.
-mod extractors;
 
 use crate::components::FrameControl;
 use crate::frame_types::*;
@@ -31,22 +29,37 @@ pub enum Payload {
 }
 
 impl Payload {
-    pub fn parse(frame_control: &FrameControl, input: &[u8]) -> Payload {
+    pub fn parse<'a>(frame_control: &FrameControl, input: &'a [u8]) -> IResult<&'a [u8], Payload> {
         // For now, only management Frames are handled
         if !matches!(frame_control.frame_type, FrameType::Management) {
-            return Payload::UnHandled(true);
+            return Ok((input, Payload::UnHandled(true)));
         }
 
         // Check which kind of frame sub-type we got
-        match frame_control.frame_subtype {
-            FrameSubType::Beacon => Payload::Beacon(Beacon::parse(input)),
-            FrameSubType::ProbeReq => Payload::ProbeRequest(ProbeRequest::parse(input)),
-            FrameSubType::ProbeResp => Payload::ProbeResponse(ProbeResponse::parse(input)),
-            FrameSubType::AssoReq => Payload::AssociationRequest(AssociationRequest::parse(input)),
-            FrameSubType::AssoResp => {
-                Payload::AssociationResponse(AssociationResponse::parse(input))
+        let (input, payload) = match frame_control.frame_subtype {
+            FrameSubType::Beacon => {
+                let (input, beacon) = Beacon::parse(input)?;
+                (input, Payload::Beacon(beacon))
             }
-            _ => Payload::UnHandled(true),
-        }
+            FrameSubType::ProbeReq => {
+                let (input, request) = ProbeRequest::parse(input)?;
+                (input, Payload::ProbeRequest(request))
+            }
+            FrameSubType::ProbeResp => {
+                let (input, response) = ProbeResponse::parse(input)?;
+                (input, Payload::ProbeResponse(response))
+            }
+            FrameSubType::AssoReq => {
+                let (input, request) = AssociationRequest::parse(input)?;
+                (input, Payload::AssociationRequest(request))
+            }
+            FrameSubType::AssoResp => {
+                let (input, response) = AssociationResponse::parse(input)?;
+                (input, Payload::AssociationResponse(response))
+            }
+            _ => (input, Payload::UnHandled(true)),
+        };
+
+        Ok((input, payload))
     }
 }

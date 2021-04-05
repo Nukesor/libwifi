@@ -1,3 +1,4 @@
+#![feature(destructuring_assignment)]
 use nom::IResult;
 
 /// Contains structs representing recurring sets of structured data.
@@ -31,7 +32,7 @@ impl Frame {
         );
         println!("Payload bytes: {:?}", &input);
 
-        let payload = Payload::parse(&frame_control, &input);
+        let (input, payload) = Payload::parse(&frame_control, &input)?;
 
         Ok((
             input,
