@@ -47,8 +47,31 @@ impl Frame {
 impl Frame {
     pub fn src(&self) -> Option<&MacAddress> {
         match &self.payload {
-            Payload::Beacon(beacon) => beacon.src(&self.control),
-            _ => None,
+            Payload::Beacon(inner) => inner.src(&self.control),
+            Payload::ProbeRequest(inner) => inner.src(&self.control),
+            Payload::ProbeResponse(inner) => inner.src(&self.control),
+            Payload::AssociationRequest(inner) => inner.src(&self.control),
+            Payload::AssociationResponse(inner) => inner.src(&self.control),
+        }
+    }
+
+    pub fn dest(&self) -> &MacAddress {
+        match &self.payload {
+            Payload::Beacon(inner) => inner.dest(&self.control),
+            Payload::ProbeRequest(inner) => inner.dest(&self.control),
+            Payload::ProbeResponse(inner) => inner.dest(&self.control),
+            Payload::AssociationRequest(inner) => inner.dest(&self.control),
+            Payload::AssociationResponse(inner) => inner.dest(&self.control),
+        }
+    }
+
+    pub fn bssid(&self) -> Option<&MacAddress> {
+        match &self.payload {
+            Payload::Beacon(inner) => inner.bssid(&self.control),
+            Payload::ProbeRequest(inner) => inner.bssid(&self.control),
+            Payload::ProbeResponse(inner) => inner.bssid(&self.control),
+            Payload::AssociationRequest(inner) => inner.bssid(&self.control),
+            Payload::AssociationResponse(inner) => inner.bssid(&self.control),
         }
     }
 }

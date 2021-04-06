@@ -1,4 +1,7 @@
-use nom::IResult;
+use nom::{
+    error::{Error, ErrorKind},
+    IResult,
+};
 
 pub mod association_request;
 pub mod association_response;
@@ -24,15 +27,13 @@ pub enum Payload {
     ProbeResponse(ProbeResponse),
     AssociationRequest(AssociationRequest),
     AssociationResponse(AssociationResponse),
-    UnHandled(bool),
-    Empty,
 }
 
 impl Payload {
     pub fn parse<'a>(frame_control: &FrameControl, input: &'a [u8]) -> IResult<&'a [u8], Payload> {
         // For now, only management Frames are handled
         if !matches!(frame_control.frame_type, FrameType::Management) {
-            return Ok((input, Payload::UnHandled(true)));
+            return Err(nom::Err::Failure(Error::new(input, ErrorKind::IsNot)));
         }
 
         // Check which kind of frame sub-type we got
@@ -57,7 +58,9 @@ impl Payload {
                 let (input, response) = AssociationResponse::parse(input)?;
                 (input, Payload::AssociationResponse(response))
             }
-            _ => (input, Payload::UnHandled(true)),
+            _ => {
+                return Err(nom::Err::Failure(Error::new(input, ErrorKind::IsNot)));
+            }
         };
 
         Ok((input, payload))

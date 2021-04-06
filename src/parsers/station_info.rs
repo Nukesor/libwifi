@@ -6,7 +6,7 @@ use nom::IResult;
 use crate::components::StationInfo;
 
 pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
-    let mut response_info = StationInfo::default();
+    let mut station_info = StationInfo::default();
 
     let mut element_id;
     let mut length;
@@ -16,12 +16,18 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
         (input, data) = take(length)(input)?;
 
         match element_id {
-            1 => response_info.supported_rates = parse_supported_rates(data),
+            1 => station_info.supported_rates = parse_supported_rates(data),
             _ => {
-                response_info.data.insert(element_id, data.to_vec());
+                station_info.data.insert(element_id, data.to_vec());
             }
         };
+
+        if input.len() <= 4 {
+            break;
+        }
     }
+
+    Ok((input, station_info))
 }
 
 /// This is used in the ProbeResponse frame.
