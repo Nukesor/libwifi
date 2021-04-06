@@ -9,17 +9,17 @@ pub enum FrameType {
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum FrameSubType {
     // Management subtypes
-    AssoReq,
-    AssoResp,
-    ReassoReq,
-    ReassoResp,
-    ProbeReq,
-    ProbeResp,
+    AssociationRequest,
+    AssociationResponse,
+    ReassociationRequest,
+    ReassociationResponse,
+    ProbeRequest,
+    ProbeResponse,
     Beacon,
     Atim,
-    Disasso,
-    Auth,
-    Deauth,
+    Disassociation,
+    Authentication,
+    Deauthentication,
 
     // Control subtypes
     Trigger,

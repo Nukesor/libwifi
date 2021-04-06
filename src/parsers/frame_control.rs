@@ -6,11 +6,13 @@ use crate::components::FrameControl;
 use crate::frame_types::*;
 
 pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
-    let (remaining, (protocol_version, frame_type, frame_subtype, flags)) =
+    // IEE 802.11 uses big-endian
+    // Since we use little-endian, we have to go from the back to the front.
+    let (remaining, (frame_subtype, frame_type, protocol_version, flags)) =
         bits::<_, (u8, u8, u8, u8), Error<(&[u8], usize)>, _, _>(tuple((
-            take(2usize),
-            take(2usize),
             take(4usize),
+            take(2usize),
+            take(2usize),
             take(8usize),
         )))(input)?;
 
@@ -38,7 +40,7 @@ pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
 
 /// Get the FrameType from bit 3-4
 fn parse_frame_type(byte: u8) -> FrameType {
-    match (byte & 0b0000_1100) >> 2 {
+    match byte {
         0 => FrameType::Management,
         1 => FrameType::Control,
         2 => FrameType::Data,
@@ -49,18 +51,18 @@ fn parse_frame_type(byte: u8) -> FrameType {
 /// Get the FrameSubType from bit 4-7 under the assumption
 /// that this is a management frame.
 fn management_frame_subtype(byte: u8) -> FrameSubType {
-    match byte >> 4 {
-        0 => FrameSubType::AssoReq,
-        1 => FrameSubType::AssoResp,
-        2 => FrameSubType::ReassoReq,
-        3 => FrameSubType::ReassoResp,
-        4 => FrameSubType::ProbeReq,
-        5 => FrameSubType::ProbeResp,
+    match byte {
+        0 => FrameSubType::AssociationRequest,
+        1 => FrameSubType::AssociationResponse,
+        2 => FrameSubType::ReassociationRequest,
+        3 => FrameSubType::ReassociationResponse,
+        4 => FrameSubType::ProbeRequest,
+        5 => FrameSubType::ProbeResponse,
         8 => FrameSubType::Beacon,
         9 => FrameSubType::Atim,
-        10 => FrameSubType::Disasso,
-        11 => FrameSubType::Auth,
-        12 => FrameSubType::Deauth,
+        10 => FrameSubType::Disassociation,
+        11 => FrameSubType::Authentication,
+        12 => FrameSubType::Deauthentication,
         _ => FrameSubType::UnHandled,
     }
 }
@@ -68,7 +70,7 @@ fn management_frame_subtype(byte: u8) -> FrameSubType {
 /// Get the FrameSubType from bit 4-7 under the assumption
 /// that this is a control frame.
 fn control_frame_subtype(byte: u8) -> FrameSubType {
-    match byte >> 4 {
+    match byte {
         0 => FrameSubType::Reserved,
         1 => FrameSubType::Reserved,
         2 => FrameSubType::Trigger,
@@ -92,7 +94,7 @@ fn control_frame_subtype(byte: u8) -> FrameSubType {
 /// Get the FrameSubType from bit 4-7 under the assumption
 /// that this is a data frame.
 fn data_frame_subtype(byte: u8) -> FrameSubType {
-    match byte >> 4 {
+    match byte {
         0 => FrameSubType::Data,
         1 => FrameSubType::DataCfAck,
         2 => FrameSubType::DataCfPull,

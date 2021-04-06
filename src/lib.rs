@@ -17,6 +17,7 @@ use crate::variants::*;
 
 /// This represents a full IEE 800.11 frame.
 /// It's devided into the Header,
+#[derive(Clone, Debug)]
 pub struct Frame {
     pub control: FrameControl,
     pub payload: Payload,
@@ -25,14 +26,14 @@ pub struct Frame {
 
 impl Frame {
     pub fn parse(input: &[u8]) -> IResult<&[u8], Frame> {
-        let (input, frame_control) = parse_frame_control(&input)?;
+        let (input, frame_control) = parse_frame_control(input)?;
         println!(
             "Type/Subtype: {:?}, {:?}",
             frame_control.frame_type, frame_control.frame_subtype
         );
         println!("Payload bytes: {:?}", &input);
 
-        let (input, payload) = Payload::parse(&frame_control, &input)?;
+        let (input, payload) = Payload::parse(&frame_control, input)?;
 
         Ok((
             input,

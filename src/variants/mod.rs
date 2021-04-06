@@ -42,19 +42,19 @@ impl Payload {
                 let (input, beacon) = Beacon::parse(input)?;
                 (input, Payload::Beacon(beacon))
             }
-            FrameSubType::ProbeReq => {
+            FrameSubType::ProbeRequest => {
                 let (input, request) = ProbeRequest::parse(input)?;
                 (input, Payload::ProbeRequest(request))
             }
-            FrameSubType::ProbeResp => {
+            FrameSubType::ProbeResponse => {
                 let (input, response) = ProbeResponse::parse(input)?;
                 (input, Payload::ProbeResponse(response))
             }
-            FrameSubType::AssoReq => {
+            FrameSubType::AssociationRequest => {
                 let (input, request) = AssociationRequest::parse(input)?;
                 (input, Payload::AssociationRequest(request))
             }
-            FrameSubType::AssoResp => {
+            FrameSubType::AssociationResponse => {
                 let (input, response) = AssociationResponse::parse(input)?;
                 (input, Payload::AssociationResponse(response))
             }

@@ -15,8 +15,12 @@ pub use station_info::parse_station_info;
 
 pub fn parse_mac(input: &[u8]) -> IResult<&[u8], MacAddress> {
     let (remaining, bytes) = take(6usize)(input)?;
-    let mut address: [u8; 6] = [0; 6];
-    address.clone_from_slice(&bytes[0..6]);
+    Ok((remaining, MacAddress(clone_slice::<6>(bytes))))
+}
 
-    Ok((remaining, MacAddress(address)))
+pub(crate) fn clone_slice<const X: usize>(slice: &[u8]) -> [u8; X] {
+    let mut cloned_slice: [u8; X] = [0; X];
+    cloned_slice.copy_from_slice(&slice[0..X]);
+
+    cloned_slice
 }
