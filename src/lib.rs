@@ -1,9 +1,8 @@
 #![feature(destructuring_assignment)]
-use nom::IResult;
-
 /// Contains structs representing recurring sets of structured data.
 /// For instance, MAC-Addresses, default headers, etc.
 pub mod components;
+pub mod error;
 pub mod frame_types;
 /// Contains [nom] parsers for internal usage
 pub mod parsers;
@@ -11,6 +10,7 @@ pub mod traits;
 pub mod variants;
 
 use crate::components::{FrameControl, MacAddress};
+use crate::error::Error;
 use crate::parsers::parse_frame_control;
 use crate::traits::Addresses;
 use crate::variants::*;
@@ -25,7 +25,7 @@ pub struct Frame {
 }
 
 impl Frame {
-    pub fn parse(input: &[u8]) -> IResult<&[u8], Frame> {
+    pub fn parse(input: &[u8]) -> Result<Frame, Error> {
         let (input, frame_control) = parse_frame_control(input)?;
         println!(
             "Type/Subtype: {:?}, {:?}",
@@ -33,15 +33,12 @@ impl Frame {
         );
         println!("Payload bytes: {:?}", &input);
 
-        let (input, payload) = Payload::parse(&frame_control, input)?;
+        let (_, payload) = Payload::parse(&frame_control, input)?;
 
-        Ok((
-            input,
-            Frame {
-                control: frame_control,
-                payload,
-            },
-        ))
+        Ok(Frame {
+            control: frame_control,
+            payload,
+        })
     }
 }
 
