@@ -9,6 +9,7 @@ use std::collections::BTreeMap;
 /// in the `data` field under the respectiv element id.
 pub struct StationInfo {
     pub supported_rates: Vec<f32>,
+    pub ssid: Option<String>,
     /// ProbeResponseInfos
     pub data: BTreeMap<u8, Vec<u8>>,
 }

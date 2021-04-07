@@ -13,9 +13,16 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
     let mut data;
     loop {
         (input, (element_id, length)) = tuple((get_u8, get_u8))(input)?;
+        //debug!("Element id {}, Length: {}", element_id, length);
+        //println!("Remaining data: {}", input);
         (input, data) = take(length)(input)?;
+        //debug!("Extracted data: {:?}", data);
 
         match element_id {
+            0 => {
+                station_info.ssid = Some(String::from_utf8_lossy(data).to_string());
+                println!("ssid: {}", station_info.ssid.as_ref().unwrap());
+            }
             1 => station_info.supported_rates = parse_supported_rates(data),
             _ => {
                 station_info.data.insert(element_id, data.to_vec());
