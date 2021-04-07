@@ -33,7 +33,7 @@ impl Frame {
         );
         println!("Payload bytes: {:?}", &input);
 
-        let (_, payload) = Payload::parse(&frame_control, input)?;
+        let payload = Payload::parse(&frame_control, input)?;
 
         Ok(Frame {
             control: frame_control,

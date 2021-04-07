@@ -1,8 +1,3 @@
-use nom::{
-    error::{Error, ErrorKind},
-    IResult,
-};
-
 pub mod association_request;
 pub mod association_response;
 pub mod beacon;
@@ -16,6 +11,7 @@ pub use probe_request::ProbeRequest;
 pub use probe_response::ProbeResponse;
 
 use crate::components::FrameControl;
+use crate::error::Error;
 use crate::frame_types::*;
 
 #[derive(Clone, Debug)]
@@ -30,14 +26,17 @@ pub enum Payload {
 }
 
 impl Payload {
-    pub fn parse<'a>(frame_control: &FrameControl, input: &'a [u8]) -> IResult<&'a [u8], Payload> {
+    pub fn parse(frame_control: &FrameControl, input: &[u8]) -> Result<Payload, Error> {
         // For now, only management Frames are handled
         if !matches!(frame_control.frame_type, FrameType::Management) {
-            return Err(nom::Err::Failure(Error::new(input, ErrorKind::IsNot)));
+            return Err(Error::UnhandledFrameSubtype(
+                frame_control.clone(),
+                input.to_vec(),
+            ));
         }
 
         // Check which kind of frame sub-type we got
-        let (input, payload) = match frame_control.frame_subtype {
+        let (_, payload) = match frame_control.frame_subtype {
             FrameSubType::Beacon => {
                 let (input, beacon) = Beacon::parse(input)?;
                 (input, Payload::Beacon(beacon))
@@ -59,10 +58,13 @@ impl Payload {
                 (input, Payload::AssociationResponse(response))
             }
             _ => {
-                return Err(nom::Err::Failure(Error::new(input, ErrorKind::IsNot)));
+                return Err(Error::UnhandledFrameSubtype(
+                    frame_control.clone(),
+                    input.to_vec(),
+                ));
             }
         };
 
-        Ok((input, payload))
+        Ok(payload)
     }
 }
