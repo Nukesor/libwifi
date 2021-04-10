@@ -35,7 +35,7 @@ fn flag_is_set(data: u8, bit: u8) -> bool {
 ///                     These frames will be buffered at the AP ready for the station should it decide to become 'active'.
 /// bit_6 `wep`: Set if WEP is being used to encrypt the body of the frame
 /// bit_7 `order`: Set if the frame is being sent according to the 'Strictly Ordered Class'
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct FrameControl {
     pub protocol_version: u8,
     pub frame_type: FrameType,

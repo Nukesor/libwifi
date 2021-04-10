@@ -56,7 +56,7 @@ impl<T: HasHeader> Addresses for T {
     /// Return the mac address of the sender
     fn src(&self) -> Option<&MacAddress> {
         let header = self.get_header();
-        let frame_control = header.frame_control;
+        let frame_control = &header.frame_control;
         if frame_control.to_ds() {
             Some(&header.address_3)
         } else if frame_control.from_ds() {
@@ -70,7 +70,7 @@ impl<T: HasHeader> Addresses for T {
     /// A full `ff:ff:..` usually indicates a undirected broadcast.
     fn dest(&self) -> &MacAddress {
         let header = self.get_header();
-        let frame_control = header.frame_control;
+        let frame_control = &header.frame_control;
         if frame_control.to_ds() && frame_control.from_ds() {
             &header.address_3
         } else if frame_control.to_ds() {
@@ -87,7 +87,7 @@ impl<T: HasHeader> Addresses for T {
     /// The only time it's not, is in a wireless distributed system (WDS).
     fn bssid(&self) -> Option<&MacAddress> {
         let header = self.get_header();
-        let frame_control = header.frame_control;
+        let frame_control = &header.frame_control;
         if frame_control.to_ds() {
             Some(&header.address_1)
         } else if frame_control.from_ds() {

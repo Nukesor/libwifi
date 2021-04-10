@@ -24,10 +24,7 @@ pub fn parse(input: &[u8]) -> Result<Frame, Error> {
 
     // For now, only management Frames are handled
     if !matches!(frame_control.frame_type, FrameType::Management) {
-        return Err(Error::UnhandledFrameSubtype(
-            frame_control.clone(),
-            input.to_vec(),
-        ));
+        return Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec()));
     }
 
     // Check which kind of frame sub-type we got
@@ -37,9 +34,6 @@ pub fn parse(input: &[u8]) -> Result<Frame, Error> {
         FrameSubType::ProbeResponse => parse_probe_request(frame_control, input),
         FrameSubType::AssociationRequest => parse_association_request(frame_control, input),
         FrameSubType::AssociationResponse => parse_association_response(frame_control, input),
-        _ => Err(Error::UnhandledFrameSubtype(
-            frame_control.clone(),
-            input.to_vec(),
-        )),
+        _ => Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec())),
     }
 }
