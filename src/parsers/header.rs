@@ -3,9 +3,9 @@ use nom::sequence::tuple;
 use nom::IResult;
 
 use super::{clone_slice, parse_mac};
-use crate::components::Header;
+use crate::components::ManagementHeader;
 
-pub fn parse_header(input: &[u8]) -> IResult<&[u8], Header> {
+pub fn parse_management_header(input: &[u8]) -> IResult<&[u8], ManagementHeader> {
     let (remaining, (duration, address_1, address_2, address_3, seq_ctl)) =
         tuple((take(2usize), parse_mac, parse_mac, parse_mac, take(2usize)))(input)?;
 
@@ -14,13 +14,12 @@ pub fn parse_header(input: &[u8]) -> IResult<&[u8], Header> {
 
     Ok((
         remaining,
-        Header {
+        ManagementHeader {
             duration,
             address_1,
             address_2,
             address_3,
-            seq_ctl: Some(seq_ctl),
-            address_4: None,
+            seq_ctl,
         },
     ))
 }

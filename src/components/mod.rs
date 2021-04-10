@@ -4,6 +4,6 @@ mod mac;
 mod station_info;
 
 pub use frame_control::FrameControl;
-pub use header::Header;
+pub use header::ManagementHeader;
 pub use mac::MacAddress;
 pub use station_info::StationInfo;

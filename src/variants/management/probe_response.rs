@@ -3,27 +3,26 @@ use nom::sequence::tuple;
 use nom::IResult;
 
 use crate::components::*;
-use crate::parsers::{parse_header, parse_station_info};
+use crate::parsers::{parse_management_header, parse_station_info};
 use crate::traits::*;
 
 #[derive(Clone, Debug)]
-pub struct Beacon {
-    pub header: Header,
+pub struct ProbeResponse {
+    pub header: ManagementHeader,
     pub timestamp: u64,
     pub beacon_interval: u16,
     pub capability_info: u16,
     pub station_info: StationInfo,
 }
 
-impl Beacon {
-    pub fn parse(input: &[u8]) -> IResult<&[u8], Beacon> {
-        let (input, (header, timestamp, beacon_interval, capability_info)) =
-            tuple((parse_header, le_u64, le_u16, le_u16))(input)?;
-        let (input, station_info) = parse_station_info(input)?;
+impl ProbeResponse {
+    pub fn parse(input: &[u8]) -> IResult<&[u8], ProbeResponse> {
+        let (input, (header, timestamp, beacon_interval, capability_info, station_info)) =
+            tuple((parse_management_header, le_u64, le_u16, le_u16, parse_station_info))(input)?;
 
         Ok((
             input,
-            Beacon {
+            ProbeResponse {
                 header,
                 timestamp,
                 beacon_interval,
@@ -34,8 +33,8 @@ impl Beacon {
     }
 }
 
-impl HasHeader for Beacon {
-    fn get_header(&self) -> &Header {
+impl HasHeader for ProbeResponse {
+    fn get_header(&self) -> &ManagementHeader {
         &self.header
     }
 }
