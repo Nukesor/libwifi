@@ -1,15 +1,15 @@
-mod management;
+pub mod management;
 
 pub use management::*;
 
-use crate::components::FrameControl;
-use crate::error::Error;
-use crate::frame_types::*;
+use crate::components::MacAddress;
+use crate::traits::Addresses;
 
 #[derive(Clone, Debug)]
 /// This represents all currently supported payloads for various frame types/subtypes.
 /// Each variant is represented by its own struct, which can be found in the [variants] module.
-pub enum Payload {
+pub enum Frame {
+    // Management frames
     Beacon(Beacon),
     ProbeRequest(ProbeRequest),
     ProbeResponse(ProbeResponse),
@@ -17,46 +17,34 @@ pub enum Payload {
     AssociationResponse(AssociationResponse),
 }
 
-impl Payload {
-    pub fn parse(frame_control: &FrameControl, input: &[u8]) -> Result<Payload, Error> {
-        // For now, only management Frames are handled
-        if !matches!(frame_control.frame_type, FrameType::Management) {
-            return Err(Error::UnhandledFrameSubtype(
-                frame_control.clone(),
-                input.to_vec(),
-            ));
+impl Frame {
+    pub fn src(&self) -> Option<&MacAddress> {
+        match &self {
+            Frame::Beacon(inner) => inner.src(),
+            Frame::ProbeRequest(inner) => inner.src(),
+            Frame::ProbeResponse(inner) => inner.src(),
+            Frame::AssociationRequest(inner) => inner.src(),
+            Frame::AssociationResponse(inner) => inner.src(),
         }
+    }
 
-        // Check which kind of frame sub-type we got
-        let (_, payload) = match frame_control.frame_subtype {
-            FrameSubType::Beacon => {
-                let (input, beacon) = Beacon::parse(input)?;
-                (input, Payload::Beacon(beacon))
-            }
-            FrameSubType::ProbeRequest => {
-                let (input, request) = ProbeRequest::parse(input)?;
-                (input, Payload::ProbeRequest(request))
-            }
-            FrameSubType::ProbeResponse => {
-                let (input, response) = ProbeResponse::parse(input)?;
-                (input, Payload::ProbeResponse(response))
-            }
-            FrameSubType::AssociationRequest => {
-                let (input, request) = AssociationRequest::parse(input)?;
-                (input, Payload::AssociationRequest(request))
-            }
-            FrameSubType::AssociationResponse => {
-                let (input, response) = AssociationResponse::parse(input)?;
-                (input, Payload::AssociationResponse(response))
-            }
-            _ => {
-                return Err(Error::UnhandledFrameSubtype(
-                    frame_control.clone(),
-                    input.to_vec(),
-                ));
-            }
-        };
+    pub fn dest(&self) -> &MacAddress {
+        match &self {
+            Frame::Beacon(inner) => inner.dest(),
+            Frame::ProbeRequest(inner) => inner.dest(),
+            Frame::ProbeResponse(inner) => inner.dest(),
+            Frame::AssociationRequest(inner) => inner.dest(),
+            Frame::AssociationResponse(inner) => inner.dest(),
+        }
+    }
 
-        Ok(payload)
+    pub fn bssid(&self) -> Option<&MacAddress> {
+        match &self {
+            Frame::Beacon(inner) => inner.bssid(),
+            Frame::ProbeRequest(inner) => inner.bssid(),
+            Frame::ProbeResponse(inner) => inner.bssid(),
+            Frame::AssociationRequest(inner) => inner.bssid(),
+            Frame::AssociationResponse(inner) => inner.bssid(),
+        }
     }
 }

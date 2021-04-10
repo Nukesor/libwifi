@@ -1,6 +1,6 @@
 use libwifi::{
     frame_types::{FrameSubType, FrameType},
-    variants::Payload,
+    variants::Frame,
     Frame,
 };
 

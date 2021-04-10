@@ -1,9 +1,4 @@
-use nom::number::complete::{le_u16, le_u64};
-use nom::sequence::tuple;
-use nom::IResult;
-
 use crate::components::*;
-use crate::parsers::{parse_management_header, parse_station_info};
 use crate::traits::*;
 
 #[derive(Clone, Debug)]
@@ -13,25 +8,6 @@ pub struct Beacon {
     pub beacon_interval: u16,
     pub capability_info: u16,
     pub station_info: StationInfo,
-}
-
-impl Beacon {
-    pub fn parse(input: &[u8]) -> IResult<&[u8], Beacon> {
-        let (input, (header, timestamp, beacon_interval, capability_info)) =
-            tuple((parse_management_header, le_u64, le_u16, le_u16))(input)?;
-        let (input, station_info) = parse_station_info(input)?;
-
-        Ok((
-            input,
-            Beacon {
-                header,
-                timestamp,
-                beacon_interval,
-                capability_info,
-                station_info,
-            },
-        ))
-    }
 }
 
 impl HasHeader for Beacon {

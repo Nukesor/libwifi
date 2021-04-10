@@ -1,6 +1,6 @@
 use libwifi::{
     frame_types::{FrameSubType, FrameType},
-    variants::Payload,
+    variants::Frame,
     Frame,
 };
 
@@ -36,7 +36,7 @@ fn test_beacon() {
     assert!(matches!(frame.control.frame_type, FrameType::Management));
     assert!(matches!(frame.control.frame_subtype, FrameSubType::Beacon));
 
-    if let Payload::Beacon(beacon) = frame.payload {
+    if let Frame::Beacon(beacon) = frame.payload {
         assert_eq!("My face when IP", beacon.station_info.ssid.unwrap());
     }
 }
@@ -104,7 +104,7 @@ fn test_probe_response() {
         FrameSubType::ProbeResponse
     ));
 
-    if let Payload::ProbeResponse(response) = frame.payload {
+    if let Frame::ProbeResponse(response) = frame.payload {
         assert_eq!("My face when IP", response.station_info.ssid.unwrap());
     }
 }

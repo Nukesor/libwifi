@@ -9,67 +9,37 @@ pub mod parsers;
 pub mod traits;
 pub mod variants;
 
-use crate::components::{FrameControl, MacAddress};
 use crate::error::Error;
-use crate::parsers::parse_frame_control;
-use crate::traits::Addresses;
+use crate::frame_types::*;
+use crate::parsers::*;
 use crate::variants::*;
 
-/// This represents a full IEE 800.11 frame.
-/// It's devided into the Header,
-#[derive(Clone, Debug)]
-pub struct Frame {
-    pub control: FrameControl,
-    pub payload: Payload,
-    //frame_check_sequence: [u8; 4],
-}
+pub fn parse(input: &[u8]) -> Result<Frame, Error> {
+    let (input, frame_control) = parse_frame_control(input)?;
+    println!(
+        "Type/Subtype: {:?}, {:?}",
+        frame_control.frame_type, frame_control.frame_subtype
+    );
+    println!("Payload bytes: {:?}", &input);
 
-impl Frame {
-    pub fn parse(input: &[u8]) -> Result<Frame, Error> {
-        let (input, frame_control) = parse_frame_control(input)?;
-        println!(
-            "Type/Subtype: {:?}, {:?}",
-            frame_control.frame_type, frame_control.frame_subtype
-        );
-        println!("Payload bytes: {:?}", &input);
-
-        let payload = Payload::parse(&frame_control, input)?;
-
-        Ok(Frame {
-            control: frame_control,
-            payload,
-        })
-    }
-}
-
-impl Frame {
-    pub fn src(&self) -> Option<&MacAddress> {
-        match &self.payload {
-            Payload::Beacon(inner) => inner.src(&self.control),
-            Payload::ProbeRequest(inner) => inner.src(&self.control),
-            Payload::ProbeResponse(inner) => inner.src(&self.control),
-            Payload::AssociationRequest(inner) => inner.src(&self.control),
-            Payload::AssociationResponse(inner) => inner.src(&self.control),
-        }
+    // For now, only management Frames are handled
+    if !matches!(frame_control.frame_type, FrameType::Management) {
+        return Err(Error::UnhandledFrameSubtype(
+            frame_control.clone(),
+            input.to_vec(),
+        ));
     }
 
-    pub fn dest(&self) -> &MacAddress {
-        match &self.payload {
-            Payload::Beacon(inner) => inner.dest(&self.control),
-            Payload::ProbeRequest(inner) => inner.dest(&self.control),
-            Payload::ProbeResponse(inner) => inner.dest(&self.control),
-            Payload::AssociationRequest(inner) => inner.dest(&self.control),
-            Payload::AssociationResponse(inner) => inner.dest(&self.control),
-        }
-    }
-
-    pub fn bssid(&self) -> Option<&MacAddress> {
-        match &self.payload {
-            Payload::Beacon(inner) => inner.bssid(&self.control),
-            Payload::ProbeRequest(inner) => inner.bssid(&self.control),
-            Payload::ProbeResponse(inner) => inner.bssid(&self.control),
-            Payload::AssociationRequest(inner) => inner.bssid(&self.control),
-            Payload::AssociationResponse(inner) => inner.bssid(&self.control),
-        }
+    // Check which kind of frame sub-type we got
+    match frame_control.frame_subtype {
+        FrameSubType::Beacon => parse_beacon(frame_control, input),
+        FrameSubType::ProbeRequest => parse_probe_response(frame_control, input),
+        FrameSubType::ProbeResponse => parse_probe_request(frame_control, input),
+        FrameSubType::AssociationRequest => parse_association_request(frame_control, input),
+        FrameSubType::AssociationResponse => parse_association_response(frame_control, input),
+        _ => Err(Error::UnhandledFrameSubtype(
+            frame_control.clone(),
+            input.to_vec(),
+        )),
     }
 }

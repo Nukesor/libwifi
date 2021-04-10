@@ -1,20 +1,24 @@
 use nom::bytes::complete::take;
 use nom::sequence::tuple;
-use nom::IResult;
 
 use super::{clone_slice, parse_mac};
-use crate::components::ManagementHeader;
+use crate::components::{FrameControl, ManagementHeader};
+use crate::error::Error;
 
-pub fn parse_management_header(input: &[u8]) -> IResult<&[u8], ManagementHeader> {
-    let (remaining, (duration, address_1, address_2, address_3, seq_ctl)) =
+pub fn parse_management_header(
+    frame_control: FrameControl,
+    input: &[u8],
+) -> Result<(&[u8], ManagementHeader), Error> {
+    let (_remaining, (duration, address_1, address_2, address_3, seq_ctl)) =
         tuple((take(2usize), parse_mac, parse_mac, parse_mac, take(2usize)))(input)?;
 
     let duration = clone_slice::<2>(duration);
     let seq_ctl = clone_slice::<2>(seq_ctl);
 
     Ok((
-        remaining,
+        input,
         ManagementHeader {
+            frame_control,
             duration,
             address_1,
             address_2,

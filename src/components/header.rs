@@ -1,4 +1,5 @@
-use super::MacAddress;
+use super::{FrameControl, MacAddress};
+use crate::traits::{Addresses, HasHeader};
 
 /// This struct represent a management frame header.
 /// It's a pre-defined header format that is valid for all management frames!
@@ -43,9 +44,56 @@ use super::MacAddress;
 /// Contains the FragmentNumber and SequenceNumber that define the main frame and the number of fragments in the frame.
 #[derive(Clone, Debug)]
 pub struct ManagementHeader {
+    pub frame_control: FrameControl,
     pub duration: [u8; 2],
     pub address_1: MacAddress,
     pub address_2: MacAddress,
     pub address_3: MacAddress,
     pub seq_ctl: [u8; 2],
+}
+
+impl<T: HasHeader> Addresses for T {
+    /// Return the mac address of the sender
+    fn src(&self) -> Option<&MacAddress> {
+        let header = self.get_header();
+        let frame_control = header.frame_control;
+        if frame_control.to_ds() {
+            Some(&header.address_3)
+        } else if frame_control.from_ds() {
+            Some(&header.address_1)
+        } else {
+            Some(&header.address_2)
+        }
+    }
+
+    /// Return the mac address of the receiver.
+    /// A full `ff:ff:..` usually indicates a undirected broadcast.
+    fn dest(&self) -> &MacAddress {
+        let header = self.get_header();
+        let frame_control = header.frame_control;
+        if frame_control.to_ds() && frame_control.from_ds() {
+            &header.address_3
+        } else if frame_control.to_ds() {
+            &header.address_2
+        } else if frame_control.from_ds() {
+            &header.address_3
+        } else {
+            &header.address_1
+        }
+    }
+
+    /// The BSSID for this request.
+    /// In most cases, this is expected to be present.
+    /// The only time it's not, is in a wireless distributed system (WDS).
+    fn bssid(&self) -> Option<&MacAddress> {
+        let header = self.get_header();
+        let frame_control = header.frame_control;
+        if frame_control.to_ds() {
+            Some(&header.address_1)
+        } else if frame_control.from_ds() {
+            Some(&header.address_2)
+        } else {
+            Some(&header.address_3)
+        }
+    }
 }
