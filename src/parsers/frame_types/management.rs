@@ -2,13 +2,11 @@ use nom::number::complete::{le_u16, le_u64};
 use nom::sequence::tuple;
 
 use crate::error::Error;
-use crate::variants::management::*;
+use crate::frame::*;
 use crate::{
     components::FrameControl,
     parsers::{parse_management_header, parse_station_info},
 };
-
-use crate::variants::Frame;
 
 pub fn parse_association_request(
     frame_control: FrameControl,

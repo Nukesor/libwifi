@@ -9,14 +9,14 @@ pub fn parse_management_header(
     frame_control: FrameControl,
     input: &[u8],
 ) -> Result<(&[u8], ManagementHeader), Error> {
-    let (_remaining, (duration, address_1, address_2, address_3, seq_ctl)) =
+    let (remaining, (duration, address_1, address_2, address_3, seq_ctl)) =
         tuple((take(2usize), parse_mac, parse_mac, parse_mac, take(2usize)))(input)?;
 
     let duration = clone_slice::<2>(duration);
     let seq_ctl = clone_slice::<2>(seq_ctl);
 
     Ok((
-        input,
+        remaining,
         ManagementHeader {
             frame_control,
             duration,

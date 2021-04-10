@@ -13,10 +13,9 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
     let mut data;
     loop {
         (input, (element_id, length)) = tuple((get_u8, get_u8))(input)?;
-        //debug!("Element id {}, Length: {}", element_id, length);
-        //println!("Remaining data: {}", input);
+        //println!("Element id {}, Length: {}", element_id, length);
         (input, data) = take(length)(input)?;
-        //debug!("Extracted data: {:?}", data);
+        //println!("Extracted data: {:?}", data);
 
         match element_id {
             0 => {

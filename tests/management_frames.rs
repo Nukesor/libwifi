@@ -1,8 +1,4 @@
-use libwifi::{
-    frame_types::{FrameSubType, FrameType},
-    variants::Frame,
-    Frame,
-};
+use libwifi::{frame::Frame, parse};
 
 #[test]
 fn test_beacon() {
@@ -31,12 +27,11 @@ fn test_beacon() {
         0, 98, 50, 47, 0,
     ];
 
-    let frame = Frame::parse(&payload).expect("Payload should be valid");
+    let frame = parse(&payload).expect("Payload should be valid");
     println!("{:?}", frame);
-    assert!(matches!(frame.control.frame_type, FrameType::Management));
-    assert!(matches!(frame.control.frame_subtype, FrameSubType::Beacon));
+    assert!(matches!(frame, Frame::Beacon(_)));
 
-    if let Frame::Beacon(beacon) = frame.payload {
+    if let Frame::Beacon(beacon) = frame {
         assert_eq!("My face when IP", beacon.station_info.ssid.unwrap());
     }
 }
@@ -57,13 +52,9 @@ fn test_probe_request() {
         0, 0, 0, 0, 0, 191, 12, 178, 97, 128, 51, 254, 255, 134, 1, 254, 255, 134, 1,
     ];
 
-    let frame = Frame::parse(&payload).expect("Payload should be valid");
+    let frame = parse(&payload).expect("Payload should be valid");
     println!("{:?}", frame);
-    assert!(matches!(frame.control.frame_type, FrameType::Management));
-    assert!(matches!(
-        frame.control.frame_subtype,
-        FrameSubType::ProbeRequest
-    ));
+    assert!(matches!(frame, Frame::ProbeRequest(_)));
 }
 
 #[test]
@@ -76,7 +67,7 @@ fn test_probe_response() {
         248, 50, 228, 173, 71, 184, // Second address
         248, 50, 228, 173, 71, 184, // Third address
         144, 1, // SequenceControl
-        129, 106, 187, 25, 166, 0, 0, 0, // Timesetamp
+        129, 106, 187, 25, 166, 0, 0, 0, // Timestamp
         100, 0, //  beacon interval
         17, 4, // capability info
         0, 15, 77, 121, 32, 102, 97, 99, 101, 32, 119, 104, 101, 110, 32, 73, 80, // SSID
@@ -96,15 +87,11 @@ fn test_probe_response() {
         24, 0, 80, 242, 2, 1, 1, 132, 0, 3, 164, 0, 0, 39, 164, 0, 0, 66, 67, 94, 0, 98, 50, 47, 0,
     ];
 
-    let frame = Frame::parse(&payload).expect("Payload should be valid");
+    let frame = parse(&payload).expect("Payload should be valid");
     println!("{:?}", frame);
-    assert!(matches!(frame.control.frame_type, FrameType::Management));
-    assert!(matches!(
-        frame.control.frame_subtype,
-        FrameSubType::ProbeResponse
-    ));
+    assert!(matches!(frame, Frame::ProbeResponse(_)));
 
-    if let Frame::ProbeResponse(response) = frame.payload {
+    if let Frame::ProbeResponse(response) = frame {
         assert_eq!("My face when IP", response.station_info.ssid.unwrap());
     }
 }
