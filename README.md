@@ -1,5 +1,11 @@
 # Libwifi
 
+[![GitHub Actions Workflow](https://github.com/Nukesor/libwifi/workflows/Tests/badge.svg)](https://github.com/Nukesor/libwifi/actions)
+[![docs](https://docs.rs/libwifi/badge.svg)](https://docs.rs/libwifi/)
+[![license](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nukesor/libwifi/blob/master/LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/libwifi.svg)](https://crates.io/crates/libwifi)
+[![codecov](https://codecov.io/gh/nukesor/libwifi/branch/master/graph/badge.svg)](https://codecov.io/gh/nukesor/libwifi)
+
 First of all, this library is designed to be easily extendable. \
 There's an architectural/contribution guide in `docs/Frame.md` and pull requests are highly welcome.
 
