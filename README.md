@@ -15,8 +15,7 @@ Covering the whole spectrum of possible 802.11 frames or all different implement
 
 The first goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
 
-The emphasis is on **convenient**, since this library doesn't focus on providing a super high-performance implementation. \
-The focus is rather on providing an easy-to-use API.
+The emphasis is on **convenient**, since this library doesn't focus on providing a super high-performance implementation. The focus is rather on providing an easy-to-use API. \
 This includes consistent and intuitive structs representing the structure of a given frame. \
 However, this doesn't mean that this library isn't quite fast anyway ;).
 
