@@ -1,4 +1,5 @@
-use libwifi::{frame::Frame, parse};
+use libwifi::frame::Frame;
+use libwifi::parse;
 
 #[test]
 fn test_beacon() {

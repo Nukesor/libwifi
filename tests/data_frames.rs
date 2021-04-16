@@ -1,7 +1,4 @@
-use libwifi::{
-    frame::Frame,
-    frame_types::{FrameSubType, FrameType},
-};
+use libwifi::frame::Frame;
 
 #[test]
 fn test_null_data() {

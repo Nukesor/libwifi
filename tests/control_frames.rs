@@ -1,16 +1,18 @@
-use libwifi::{
-    frame::Frame,
-    frame_types::{FrameSubType, FrameType},
-};
+use libwifi::frame::Frame;
+use libwifi::parse;
 
 #[test]
 fn test_rts() {
-    let _payload = [
+    let payload = [
         180, 0, // FrameControl
         158, 0, // Duration
         116, 66, 127, 77, 29, 45, // First Address
         20, 125, 218, 170, 84, 81, // Second Address
     ];
+
+    let frame = parse(&payload).expect("Payload should be valid");
+    println!("{:?}", frame);
+    assert!(matches!(frame, Frame::Rts(_)));
 }
 
 #[test]

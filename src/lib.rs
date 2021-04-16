@@ -28,11 +28,6 @@ pub fn parse(input: &[u8]) -> Result<Frame, Error> {
     //);
     //println!("Payload bytes: {:?}", &input);
 
-    // For now, only management Frames are handled
-    if !matches!(frame_control.frame_type, FrameType::Management) {
-        return Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec()));
-    }
-
     // Check which kind of frame sub-type we got
     match frame_control.frame_subtype {
         FrameSubType::Beacon => parse_beacon(frame_control, input),
@@ -40,6 +35,7 @@ pub fn parse(input: &[u8]) -> Result<Frame, Error> {
         FrameSubType::ProbeResponse => parse_probe_response(frame_control, input),
         FrameSubType::AssociationRequest => parse_association_request(frame_control, input),
         FrameSubType::AssociationResponse => parse_association_response(frame_control, input),
+        FrameSubType::Rts => parse_rts(frame_control, input),
         _ => Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec())),
     }
 }
