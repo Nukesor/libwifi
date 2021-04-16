@@ -2,13 +2,13 @@ name: Tests
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - '.github/workflows/test.yml'
       - '**.rs'
       - 'Cargo.toml'
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       - '.github/workflows/test.yml'
       - '**.rs'

@@ -2,13 +2,13 @@ name: Code Style
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - '.github/workflows/style.yml'
       - '**.rs'
       - 'Cargo.toml'
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       - '.github/workflows/style.yml'
       - '**.rs'
