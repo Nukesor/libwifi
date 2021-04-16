@@ -1,6 +1,6 @@
 [package]
 name = "libwifi"
-description = "A cli tool for managing long running shell commands."
+description = "A library for parsing IEEE 802.11 frames and handling wifi interfaces."
 version = "0.1.0"
 authors = ["Arne Beer <contact@arne.beer>"]
 edition = "2018"
