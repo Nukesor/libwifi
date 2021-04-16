@@ -13,10 +13,10 @@ mod parsers;
 mod traits;
 
 use crate::error::Error;
-use crate::frame::*;
 use crate::parsers::*;
 
 // Re-exports for user convenience
+pub use crate::frame::Frame;
 pub use crate::frame_types::*;
 pub use crate::traits::*;
 
