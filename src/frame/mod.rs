@@ -1,13 +1,18 @@
+pub mod control;
+pub mod data;
 pub mod management;
 
+pub use control::*;
+pub use data::*;
 pub use management::*;
 
 use crate::components::MacAddress;
 use crate::traits::Addresses;
 
 #[derive(Clone, Debug)]
-/// This represents all currently supported payloads for various frame types/subtypes.
-/// Each variant is represented by its own struct, which can be found in the [variants] module.
+/// This represents all currently supported payloads for frame subtypes.
+/// Each variant is represented by its own struct.
+/// The structs are organized in files by their frame type, i.e. `management`, `data`, `control`.
 pub enum Frame {
     // Management frames
     Beacon(Beacon),

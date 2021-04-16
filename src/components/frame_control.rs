@@ -13,28 +13,25 @@ fn flag_is_set(data: u8, bit: u8) -> bool {
 }
 
 /// The very first two bytes of every frame contain the FrameControl header.
-/// https://en.wikipedia.org/wiki/802.11_Frame_Types
+/// [Wikipedia article](https://en.wikipedia.org/wiki/802.11_Frame_Types)
 ///
-/// The bytes are structured as follows.
-/// The bytes will be interpreted from left to right.
+/// First byte:
 ///
-/// First byte
-/// The first two bits specify the protocol version
-/// Until now, this has always been 0 and is expected to be 0
-/// bit 0-1: Version
-/// bit 2-3: FrameType
-/// bit 4-7: FrameSubType
+/// - **bit_0-1**: Protocol version.
+///     Until now, this has always been 0 and is expected to be 0.
+/// - **bit_2-3**: [FrameType]
+/// - **bit_4-7**: [FrameSubType]
 ///
-/// 8 Flags (second byte)
-/// bit_0 `to_ds`: Set if the frame is to be sent by the AP to the distribution system.
-/// bit_1 `from_ds`: Set if the frame is from the distribution system.
-/// bit_2 `more_frag`: Set if this frame is a fragment of a bigger frame and there are more fragments to follow.
-/// bit_3 `retry`: Set if this frame is a retransmission, maybe through the loss of an ACK.
-/// bit_4 `power_mgmt`: indicates what power mode ('save' or 'active') the station is to be in once the frame has been sent.
-/// bit_5 `more_data`: set by the AP to indicate that more frames are destined to a particular station that may be in power save mode.
-///                     These frames will be buffered at the AP ready for the station should it decide to become 'active'.
-/// bit_6 `wep`: Set if WEP is being used to encrypt the body of the frame
-/// bit_7 `order`: Set if the frame is being sent according to the 'Strictly Ordered Class'
+/// Second byte (Flags):
+/// - **bit_0** `to_ds`: Set if the frame is to be sent by the AP to the distribution system.
+/// - **bit_1** `from_ds`: Set if the frame is from the distribution system.
+/// - **bit_2** `more_frag`: Set if this frame is a fragment of a bigger frame and there are more fragments to follow.
+/// - **bit_3** `retry`: Set if this frame is a retransmission, maybe through the loss of an ACK.
+/// - **bit_4** `power_mgmt`: Indicates what power mode (`save` or `active`) the station will be in, once the frame has been sent.
+/// - **bit_5** `more_data`: Set by the AP to indicate that more frames are destined to a particular station that may be in power save mode.
+///                     These frames will be buffered at the AP, so it can be sent once the station decides to become `active`.
+/// - **bit_6** `wep`: Set if WEP is being used to encrypt the body of the frame.
+/// - **bit_7** `order`: Set if the frame is being sent according to the _Strictly Ordered Class_.
 #[derive(Clone, Debug)]
 pub struct FrameControl {
     pub protocol_version: u8,

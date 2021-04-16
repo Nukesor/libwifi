@@ -8,6 +8,13 @@ use crate::{
     parsers::{parse_management_header, parse_station_info},
 };
 
+/// Parse an [AssociationRequest] frame.
+///
+/// The general structure is:
+/// - ManagementHeader
+/// - Beacon interval
+/// - Capability info
+/// - Dynamic fields
 pub fn parse_association_request(
     frame_control: FrameControl,
     input: &[u8],
@@ -24,6 +31,14 @@ pub fn parse_association_request(
     }))
 }
 
+/// Parse an [AssociationResponse] frame.
+///
+/// The general structure is:
+/// - ManagementHeader
+/// - Capability info
+/// - Status code
+/// - Association id
+/// - Dynamic fields
 pub fn parse_association_response(
     frame_control: FrameControl,
     input: &[u8],
@@ -41,6 +56,13 @@ pub fn parse_association_response(
     }))
 }
 
+/// Parse a [Beacon] frame.
+///
+/// The general structure is:
+/// - ManagementHeader
+/// - Beacon interval
+/// - Capability info
+/// - Dynamic fields
 pub fn parse_beacon(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
     let (_, (timestamp, beacon_interval, capability_info, station_info)) =
@@ -55,6 +77,11 @@ pub fn parse_beacon(frame_control: FrameControl, input: &[u8]) -> Result<Frame, 
     }))
 }
 
+/// Parse a [ProbeRequest] frame.
+///
+/// The general structure is:
+/// - ManagementHeader
+/// - Dynamic fields
 pub fn parse_probe_request(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
     let (_, station_info) = parse_station_info(input)?;
@@ -65,6 +92,13 @@ pub fn parse_probe_request(frame_control: FrameControl, input: &[u8]) -> Result<
     }))
 }
 
+/// Parse a [ProbeResponse] frame.
+///
+/// The general structure is:
+/// - ManagementHeader
+/// - Beacon interval
+/// - Capability info
+/// - Dynamic fields
 pub fn parse_probe_response(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
     let (_, (timestamp, beacon_interval, capability_info, station_info)) =

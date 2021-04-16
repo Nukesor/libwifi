@@ -5,6 +5,7 @@ use super::{clone_slice, parse_mac};
 use crate::components::{FrameControl, ManagementHeader};
 use crate::error::Error;
 
+/// Parse and return the [ManagementHeader] from a given payload.
 pub fn parse_management_header(
     frame_control: FrameControl,
     input: &[u8],

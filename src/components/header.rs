@@ -1,8 +1,12 @@
 use super::{FrameControl, MacAddress};
 use crate::traits::{Addresses, HasHeader};
 
-/// This struct represent a management frame header.
-/// It's a pre-defined header format that is valid for all management frames!
+/// Representation of a management frame header. This format is used by all management frames!
+///
+/// This struct implements the `Addresses` trait, which provides the `src`, `dest` and `bssid`
+/// functions.
+///
+/// Structure of a management header:
 ///
 /// **Bytes 0-1** \
 /// These contain protocol meta information and flags. These have already been parsed!

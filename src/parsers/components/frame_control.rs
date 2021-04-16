@@ -38,7 +38,7 @@ pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
     ))
 }
 
-/// Get the FrameType from bit 3-4
+/// Get the FrameType a two-bit integer (bits 3-4 of the payload).
 fn parse_frame_type(byte: u8) -> FrameType {
     match byte {
         0 => FrameType::Management,
@@ -48,8 +48,8 @@ fn parse_frame_type(byte: u8) -> FrameType {
     }
 }
 
-/// Get the FrameSubType from bit 4-7 under the assumption
-/// that this is a management frame.
+/// Get the FrameSubType from a 4-bit integer (bit 4-7) under
+/// the assumption that this is a management frame.
 fn management_frame_subtype(byte: u8) -> FrameSubType {
     match byte {
         0 => FrameSubType::AssociationRequest,
@@ -67,8 +67,8 @@ fn management_frame_subtype(byte: u8) -> FrameSubType {
     }
 }
 
-/// Get the FrameSubType from bit 4-7 under the assumption
-/// that this is a control frame.
+/// Get the FrameSubType from a 4-bit integer (bit 4-7) under
+/// the assumption that this is a control frame.
 fn control_frame_subtype(byte: u8) -> FrameSubType {
     match byte {
         0 => FrameSubType::Reserved,
@@ -91,8 +91,8 @@ fn control_frame_subtype(byte: u8) -> FrameSubType {
     }
 }
 
-/// Get the FrameSubType from bit 4-7 under the assumption
-/// that this is a data frame.
+/// Get the FrameSubType from a 4-bit integer (bit 4-7) under
+/// the assumption that this is a data frame.
 fn data_frame_subtype(byte: u8) -> FrameSubType {
     match byte {
         0 => FrameSubType::Data,

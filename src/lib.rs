@@ -2,17 +2,23 @@
 /// Contains structs representing recurring sets of structured data.
 /// For instance, MAC-Addresses, default headers, etc.
 pub mod components;
+/// Libwifi's own [Error](error::Error) implementation
 pub mod error;
+/// Libwifi's own [Error](error::Error) implementation
 pub mod frame;
-pub mod frame_types;
+mod frame_types;
 /// Contains [nom] parsers for internal usage
-pub mod parsers;
-pub mod traits;
+mod parsers;
+/// Contains all traits provided by this library
+mod traits;
 
 use crate::error::Error;
 use crate::frame::*;
-use crate::frame_types::*;
 use crate::parsers::*;
+
+// Re-exports for user convenience
+pub use crate::frame_types::*;
+pub use crate::traits::*;
 
 pub fn parse(input: &[u8]) -> Result<Frame, Error> {
     let (input, frame_control) = parse_frame_control(input)?;
