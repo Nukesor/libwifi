@@ -1,0 +1,10 @@
+ignore:
+  - "docs"
+  - "examples"
+  - "proptest_regressions"
+  - "tests"
+  - "target"
+  - "README.md"
+  - "LICENSE"
+  - "Cargo.lock"
+  - "Cargo.toml"
