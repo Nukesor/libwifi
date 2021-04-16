@@ -1,7 +1,7 @@
 [package]
 name = "libwifi"
 description = "A library for parsing IEEE 802.11 frames and handling wifi interfaces."
-version = "0.1.0"
+version = "0.0.0"
 authors = ["Arne Beer <contact@arne.beer>"]
 edition = "2018"
 
@@ -9,7 +9,7 @@ homepage = "https://github.com/nukesor/libwifi"
 repository = "https://github.com/nukesor/libwifi"
 documentation = "https://docs.rs/libwifi/"
 license = "MIT"
-keywords = ["wifi", "802.11", "parser", "frame"]
+keywords = ["wifi", "802_11", "parser", "frame"]
 readme = "README.md"
 
 [dependencies]
