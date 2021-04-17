@@ -1,4 +1,6 @@
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+use strum_macros::Display;
+
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
 pub enum FrameType {
     Management,
     Control,
@@ -6,7 +8,7 @@ pub enum FrameType {
     Unknown,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
 pub enum FrameSubType {
     // Management subtypes
     AssociationRequest,
