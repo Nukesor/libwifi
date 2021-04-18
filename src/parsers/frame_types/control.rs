@@ -1,7 +1,7 @@
 use nom::bytes::complete::take;
 use nom::sequence::tuple;
 
-use crate::components::FrameControl;
+use crate::frame::components::FrameControl;
 use crate::error::Error;
 use crate::frame::*;
 use crate::parsers::{clone_slice, parse_mac};

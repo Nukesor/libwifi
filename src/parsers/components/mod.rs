@@ -1,7 +1,7 @@
 use nom::bytes::complete::take;
 use nom::IResult;
 
-use crate::components::MacAddress;
+use crate::frame::components::MacAddress;
 
 pub mod frame_control;
 pub mod header;

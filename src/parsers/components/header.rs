@@ -2,7 +2,7 @@ use nom::bytes::complete::take;
 use nom::sequence::tuple;
 
 use super::{clone_slice, parse_mac};
-use crate::components::{FrameControl, ManagementHeader};
+use crate::frame::components::{FrameControl, ManagementHeader};
 use crate::error::Error;
 
 /// Parse and return the [ManagementHeader] from a given payload.

@@ -1,6 +1,6 @@
 use nom::Needed;
 
-use crate::components::FrameControl;
+use crate::frame::components::FrameControl;
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {

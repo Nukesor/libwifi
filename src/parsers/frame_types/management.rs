@@ -2,11 +2,9 @@ use nom::number::complete::{le_u16, le_u64};
 use nom::sequence::tuple;
 
 use crate::error::Error;
+use crate::frame::components::FrameControl;
 use crate::frame::*;
-use crate::{
-    components::FrameControl,
-    parsers::{parse_management_header, parse_station_info},
-};
+use crate::parsers::{parse_management_header, parse_station_info};
 
 /// Parse an [AssociationRequest] frame.
 ///

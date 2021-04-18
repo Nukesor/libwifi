@@ -1,4 +1,4 @@
-use crate::components::*;
+use crate::frame::components::*;
 use crate::traits::*;
 
 #[derive(Clone, Debug)]

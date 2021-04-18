@@ -1,4 +1,4 @@
-use crate::components::{FrameControl, MacAddress};
+use crate::frame::components::{FrameControl, MacAddress};
 use crate::Addresses;
 
 #[derive(Clone, Debug)]

@@ -1,7 +1,4 @@
 #![feature(destructuring_assignment)]
-/// Contains structs representing recurring sets of structured data.
-/// For instance, MAC-Addresses, default headers, etc.
-pub mod components;
 /// Libwifi's own [Error](error::Error) implementation
 pub mod error;
 /// The [Frame](frame::Frame) enum and all structs that represent each type of possible frame.

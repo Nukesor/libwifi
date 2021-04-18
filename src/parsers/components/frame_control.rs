@@ -2,7 +2,7 @@ use nom::sequence::tuple;
 use nom::{bits, IResult};
 use nom::{complete::take, error::Error};
 
-use crate::components::FrameControl;
+use crate::frame::components::FrameControl;
 use crate::frame_types::*;
 
 pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {

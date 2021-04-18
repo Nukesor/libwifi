@@ -3,7 +3,7 @@ use nom::number::complete::u8 as get_u8;
 use nom::sequence::tuple;
 use nom::IResult;
 
-use crate::components::StationInfo;
+use crate::frame::components::StationInfo;
 
 pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
     let mut station_info = StationInfo::default();

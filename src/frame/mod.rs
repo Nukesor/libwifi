@@ -1,12 +1,18 @@
+/// Contains structs representing recurring sets of structured data.
+/// For instance, MAC-Addresses, default headers, etc.
+pub mod components;
+/// All structs representing control frames
 pub mod control;
+/// All structs representing data frames
 pub mod data;
+/// All structs representing management frames
 pub mod management;
 
 pub use control::*;
 pub use data::*;
 pub use management::*;
 
-use crate::components::MacAddress;
+use self::components::MacAddress;
 use crate::traits::Addresses;
 
 #[derive(Clone, Debug)]

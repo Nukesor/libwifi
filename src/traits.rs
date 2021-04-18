@@ -1,4 +1,4 @@
-use crate::components::{MacAddress, ManagementHeader};
+use crate::frame::components::{MacAddress, ManagementHeader};
 
 pub trait HasHeader {
     fn get_header(&self) -> &ManagementHeader;
