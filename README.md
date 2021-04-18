@@ -19,6 +19,16 @@ The emphasis is on **convenient**, since this library doesn't focus on providing
 This includes consistent and intuitive structs representing the structure of a given frame. \
 However, this doesn't mean that this library isn't quite fast anyway ;).
 
+The second goal is to provide an unified API to:
+1. query information about your wifi interfaces (iwlist equivalent).
+2. set attributes and configure your wifi interfaces (iwconfig equivalent).
+
+As a prototype it's planned to call and parse existing binaries.
+However, a native re-implementation of those tools is desired in a long-term manner. \
+For instance, the [wireless-tools](https://github.com/HewlettPackard/wireless-tools) are a great C-library with a lot of documentation and very will structured code.
+This could be used as a guide-line for re-implementation.
+
+
 ### How to use it
 
 Parsing a frame is fairly straight forward:
@@ -61,6 +71,7 @@ This includes features to:
 - [ ] Switch modes
 - [ ] Switch channels
 - [ ] Discover available channels
+
 
 ### Nightly
 
