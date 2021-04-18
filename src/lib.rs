@@ -4,8 +4,9 @@
 pub mod components;
 /// Libwifi's own [Error](error::Error) implementation
 pub mod error;
-/// Libwifi's own [Error](error::Error) implementation
+/// The [Frame](frame::Frame) enum and all structs that represent each type of possible frame.
 pub mod frame;
+/// Enums that represent all frame types and frame sub-types.
 mod frame_types;
 /// Contains [nom] parsers for internal usage
 mod parsers;
@@ -20,7 +21,7 @@ pub use crate::frame::Frame;
 pub use crate::frame_types::*;
 pub use crate::traits::*;
 
-pub fn parse(input: &[u8]) -> Result<Frame, Error> {
+pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
     let (input, frame_control) = parse_frame_control(input)?;
     //println!(
     //    "Type/Subtype: {:?}, {:?}",
