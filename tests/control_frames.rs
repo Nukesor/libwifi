@@ -1,5 +1,5 @@
 use libwifi::frame::Frame;
-use libwifi::parse;
+use libwifi::parse_frame;
 
 #[test]
 fn test_rts() {
@@ -10,7 +10,7 @@ fn test_rts() {
         20, 125, 218, 170, 84, 81, // Second Address
     ];
 
-    let frame = parse(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload).expect("Payload should be valid");
     println!("{:?}", frame);
     assert!(matches!(frame, Frame::Rts(_)));
 }

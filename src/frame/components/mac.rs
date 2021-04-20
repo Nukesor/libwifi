@@ -3,7 +3,7 @@ use std::fmt;
 /// This is our representation of a MAC-address
 ///
 /// ```
-/// use libwifi::components::MacAddress;
+/// use libwifi::frame::components::MacAddress;
 ///
 /// let address = MacAddress([255, 255, 255, 255, 255, 255]);
 /// println!("{}", address.is_broadcast());
