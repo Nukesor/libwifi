@@ -30,6 +30,42 @@ impl fmt::Display for MacAddress {
     }
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
+pub enum MacParseError {
+    InvalidDigit,
+    InvalidLength,
+}
+
+impl fmt::Display for MacParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Encountered an error while parsing a mac address.")
+    }
+}
+
+impl std::error::Error for MacParseError {}
+
+impl std::str::FromStr for MacAddress {
+    type Err = MacParseError;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let mut array = [0u8; 6];
+
+        let bytes: Vec<&str> = input.split(|c| c == ':').collect();
+        if bytes.len() != 6 {
+            return Err(MacParseError::InvalidLength);
+        }
+
+        let mut count = 0;
+        for byte in bytes {
+            array[count] = u8::from_str_radix(byte, 16).map_err(|_| MacParseError::InvalidDigit)?;
+
+            count += 1;
+        }
+
+        Ok(MacAddress(array))
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
