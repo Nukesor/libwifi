@@ -34,6 +34,7 @@ pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
         FrameSubType::AssociationRequest => parse_association_request(frame_control, input),
         FrameSubType::AssociationResponse => parse_association_response(frame_control, input),
         FrameSubType::Rts => parse_rts(frame_control, input),
+        FrameSubType::Cts => parse_cts(frame_control, input),
         _ => Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec())),
     }
 }
