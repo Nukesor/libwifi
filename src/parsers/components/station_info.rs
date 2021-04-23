@@ -20,7 +20,6 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
         match element_id {
             0 => {
                 station_info.ssid = Some(String::from_utf8_lossy(data).to_string());
-                println!("ssid: {}", station_info.ssid.as_ref().unwrap());
             }
             1 => station_info.supported_rates = parse_supported_rates(data),
             _ => {
