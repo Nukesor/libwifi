@@ -26,13 +26,14 @@ fn test_null_data() {
 }
 
 #[test]
-fn test_qos_null_data() {
+fn test_qos_null() {
     let _payload = [
         200, 1, // FrameControl
         58, 1, // Duration id
         248, 50, 228, 173, 71, 184, // First Address
         192, 238, 251, 75, 207, 58, // Second Address
         248, 50, 228, 173, 71, 184, // Third Address
-        80, 106, 0, 0,
+        80, 106, // Sequence Control
+        0, 0, // QoS Header
     ];
 }
