@@ -17,3 +17,6 @@ log = "0.4"
 nom = "6"
 thiserror = "1.0"
 strum_macros = "0.20"
+
+#libwifi_macros = {path = "../libwifi_macros"}
+libwifi_macros = "0.0.1"

@@ -5,9 +5,9 @@ pub mod error;
 pub mod frame;
 /// Enums that represent all frame types and frame sub-types.
 mod frame_types;
-/// Contains [nom] parsers for internal usage
+/// Contains [nom] parsers for internal usage.
 mod parsers;
-/// Contains all traits provided by this library
+/// Contains all traits provided by this library.
 mod traits;
 
 use crate::error::Error;
@@ -28,13 +28,19 @@ pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
 
     // Check which kind of frame sub-type we got
     match frame_control.frame_subtype {
+        // Management
         FrameSubType::Beacon => parse_beacon(frame_control, input),
         FrameSubType::ProbeRequest => parse_probe_request(frame_control, input),
         FrameSubType::ProbeResponse => parse_probe_response(frame_control, input),
         FrameSubType::AssociationRequest => parse_association_request(frame_control, input),
         FrameSubType::AssociationResponse => parse_association_response(frame_control, input),
+
+        // Control
         FrameSubType::Rts => parse_rts(frame_control, input),
         FrameSubType::Cts => parse_cts(frame_control, input),
+
+        // Data
+        FrameSubType::Data => parse_data(frame_control, input),
         _ => Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec())),
     }
 }

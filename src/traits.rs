@@ -1,8 +1,4 @@
-use crate::frame::components::{MacAddress, ManagementHeader};
-
-pub trait HasHeader {
-    fn get_header(&self) -> &ManagementHeader;
-}
+use crate::frame::components::MacAddress;
 
 pub trait Addresses {
     /// Returns the sender of the Frame.

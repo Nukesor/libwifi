@@ -1,5 +1,5 @@
 use super::{FrameControl, MacAddress};
-use crate::traits::{Addresses, HasHeader};
+use crate::traits::Addresses;
 
 /// Representation of a management frame header. This format is used by all management frames!
 ///
@@ -24,6 +24,18 @@ use crate::traits::{Addresses, HasHeader};
 /// byte 16-21: Address 3.
 /// byte 22-23: Sequence Control.
 ///
+/// **Sequence Control:** \
+/// Contains the FragmentNumber and SequenceNumber that define the main frame and the number of fragments in the frame.
+#[derive(Clone, Debug)]
+pub struct ManagementHeader {
+    pub frame_control: FrameControl,
+    pub duration: [u8; 2],
+    pub address_1: MacAddress,
+    pub address_2: MacAddress,
+    pub address_3: MacAddress,
+    pub seq_ctl: [u8; 2],
+}
+
 /// Which address is used in which way, depends on a combination of
 /// - two flags in the FrameControl header.
 /// - the Type/Subtype constellation.
@@ -46,43 +58,31 @@ use crate::traits::{Addresses, HasHeader};
 ///
 /// **Sequence Control:** \
 /// Contains the FragmentNumber and SequenceNumber that define the main frame and the number of fragments in the frame.
-#[derive(Clone, Debug)]
-pub struct ManagementHeader {
-    pub frame_control: FrameControl,
-    pub duration: [u8; 2],
-    pub address_1: MacAddress,
-    pub address_2: MacAddress,
-    pub address_3: MacAddress,
-    pub seq_ctl: [u8; 2],
-}
-
-impl<T: HasHeader> Addresses for T {
+impl Addresses for ManagementHeader {
     /// Return the mac address of the sender
     fn src(&self) -> Option<&MacAddress> {
-        let header = self.get_header();
-        let frame_control = &header.frame_control;
+        let frame_control = &self.frame_control;
         if frame_control.to_ds() {
-            Some(&header.address_3)
+            Some(&self.address_3)
         } else if frame_control.from_ds() {
-            Some(&header.address_1)
+            Some(&self.address_1)
         } else {
-            Some(&header.address_2)
+            Some(&self.address_2)
         }
     }
 
     /// Return the mac address of the receiver.
     /// A full `ff:ff:..` usually indicates a undirected broadcast.
     fn dest(&self) -> &MacAddress {
-        let header = self.get_header();
-        let frame_control = &header.frame_control;
+        let frame_control = &self.frame_control;
         if frame_control.to_ds() && frame_control.from_ds() {
-            &header.address_3
+            &self.address_3
         } else if frame_control.to_ds() {
-            &header.address_2
+            &self.address_2
         } else if frame_control.from_ds() {
-            &header.address_3
+            &self.address_3
         } else {
-            &header.address_1
+            &self.address_1
         }
     }
 
@@ -90,14 +90,93 @@ impl<T: HasHeader> Addresses for T {
     /// In most cases, this is expected to be present.
     /// The only time it's not, is in a wireless distributed system (WDS).
     fn bssid(&self) -> Option<&MacAddress> {
-        let header = self.get_header();
-        let frame_control = &header.frame_control;
+        let frame_control = &self.frame_control;
         if frame_control.to_ds() {
-            Some(&header.address_1)
+            Some(&self.address_1)
         } else if frame_control.from_ds() {
-            Some(&header.address_2)
+            Some(&self.address_2)
         } else {
-            Some(&header.address_3)
+            Some(&self.address_3)
+        }
+    }
+}
+
+/// Representation of a data frame header. This format is used by all data frames!
+///
+/// It's very similar to the format of the management header, but there are some slight
+/// differences, since they allow a forth address and Quality of Service (QoS) data.
+///
+/// Structure:
+///
+/// **Bytes 0-1** \
+/// These contain protocol meta information and flags. These have already been parsed!
+/// Take a look at the [FrameControl] struct for more information.
+///
+/// **Bytes 2-3** \
+/// Those are the duration bytes. These are always present!
+/// They are quite specific and not explained here.
+///
+/// **Bytes 4-29** \
+/// These contain all important address information.
+///
+/// byte 4-9: Address 1. Always present!
+/// byte 10-15: Address 2.
+/// byte 16-21: Address 3.
+/// byte 22-23: Sequence Control.
+#[derive(Clone, Debug)]
+pub struct DataHeader {
+    pub frame_control: FrameControl,
+    pub duration: [u8; 2],
+    pub address_1: MacAddress,
+    pub address_2: MacAddress,
+    pub address_3: MacAddress,
+    pub seq_ctl: [u8; 2],
+    pub address_4: Option<MacAddress>,
+    pub qos: Option<[u8; 2]>,
+}
+
+impl Addresses for DataHeader {
+    /// Return the mac address of the sender
+    fn src(&self) -> Option<&MacAddress> {
+        if self.frame_control.to_ds() && self.frame_control.from_ds() {
+            // This should be safe.
+            // If both to_ds and from_ds are true, we always read the forth address.
+            self.address_4.as_ref()
+        } else if self.frame_control.to_ds() {
+            Some(&self.address_3)
+        } else if self.frame_control.from_ds() {
+            Some(&self.address_1)
+        } else {
+            Some(&self.address_2)
+        }
+    }
+
+    /// Return the mac address of the receiver.
+    /// A full `ff:ff:..` usually indicates a undirected broadcast.
+    fn dest(&self) -> &MacAddress {
+        if self.frame_control.to_ds() && self.frame_control.from_ds() {
+            &self.address_3
+        } else if self.frame_control.to_ds() {
+            &self.address_2
+        } else if self.frame_control.from_ds() {
+            &self.address_3
+        } else {
+            &self.address_1
+        }
+    }
+
+    /// The BSSID for this request.
+    /// In most cases, this is expected to be present.
+    /// The only time it's not, is in a wireless distributed system (WDS).
+    fn bssid(&self) -> Option<&MacAddress> {
+        if self.frame_control.to_ds() && self.frame_control.from_ds() {
+            None
+        } else if self.frame_control.to_ds() {
+            Some(&self.address_1)
+        } else if self.frame_control.from_ds() {
+            Some(&self.address_2)
+        } else {
+            self.address_4.as_ref()
         }
     }
 }

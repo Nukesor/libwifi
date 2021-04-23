@@ -42,18 +42,36 @@ pub enum FrameSubType {
     // Data subtypes
     Data,
     DataCfAck,
-    DataCfPull,
-    DataCfAckCfPull,
+    DataCfPoll,
+    DataCfAckCfPoll,
     NullData,
     CfAck,
-    CfPull,
-    CfAckCfPull,
-    QoS,
-    QoSCfPull,
-    QoSCfAckCfPull,
-    QoSNullData,
+    CfPoll,
+    CfAckCfPoll,
+    QosData,
+    QosDataCfAck,
+    QosDataCfPoll,
+    QosDataCfAckCfPoll,
+    QosNull,
+    QosCfPoll,
+    QosCfAckCfPoll,
 
     // Special subtypes
     Reserved,
     UnHandled,
+}
+
+impl FrameSubType {
+    pub fn is_qos(&self) -> bool {
+        match self {
+            FrameSubType::QosData
+            | FrameSubType::QosDataCfAck
+            | FrameSubType::QosDataCfPoll
+            | FrameSubType::QosDataCfAckCfPoll
+            | FrameSubType::QosNull
+            | FrameSubType::QosCfPoll
+            | FrameSubType::QosCfAckCfPoll => true,
+            _ => false,
+        }
+    }
 }

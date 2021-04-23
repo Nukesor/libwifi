@@ -8,7 +8,7 @@ pub mod header;
 pub mod station_info;
 
 pub use frame_control::parse_frame_control;
-pub use header::parse_management_header;
+pub use header::*;
 pub use station_info::parse_station_info;
 
 pub fn parse_mac(input: &[u8]) -> IResult<&[u8], MacAddress> {
