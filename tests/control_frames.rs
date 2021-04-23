@@ -18,11 +18,15 @@ fn test_rts() {
 #[test]
 fn test_cts() {
     // 2B FrameControl + 2B Duration + 6B Address1 (Missing CRC)
-    let _payload = [
+    let payload = [
         196, 0, // FrameControl
         246, 14, // Duration
         224, 62, 68, 8, 195, 239, // First Address
     ];
+
+    let frame = parse_frame(&payload).expect("Payload should be valid");
+    println!("{:?}", frame);
+    assert!(matches!(frame, Frame::Cts(_)));
 }
 
 #[test]
