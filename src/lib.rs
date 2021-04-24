@@ -18,6 +18,7 @@ pub use crate::frame::Frame;
 pub use crate::frame_types::*;
 pub use crate::traits::*;
 
+/// This is the main function for IEE 802.11 parsing.
 pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
     let (input, frame_control) = parse_frame_control(input)?;
     //println!(

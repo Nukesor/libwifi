@@ -1,5 +1,6 @@
 use strum_macros::Display;
 
+/// Representation of all possible the frame types.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
 pub enum FrameType {
     Management,
@@ -8,6 +9,7 @@ pub enum FrameType {
     Unknown,
 }
 
+/// Representation of the exact frame subtypes.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
 pub enum FrameSubType {
     // Management subtypes

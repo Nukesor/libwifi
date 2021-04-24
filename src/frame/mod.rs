@@ -1,11 +1,11 @@
 /// Contains structs representing recurring sets of structured data.
 /// For instance, MAC-Addresses, default headers, etc.
 pub mod components;
-/// All structs representing control frames
+/// Control frame structs
 pub mod control;
-/// All structs representing data frames
+/// Data frames structs
 pub mod data;
-/// All structs representing management frames
+/// Management frame structs
 pub mod management;
 
 pub use control::*;
@@ -18,7 +18,8 @@ use crate::traits::Addresses;
 #[derive(Clone, Debug)]
 /// This represents all currently supported payloads for frame subtypes.
 /// Each variant is represented by its own struct.
-/// The structs are organized in files by their frame type, i.e. `management`, `data`, `control`.
+///
+/// The structs are organized by their frame type in submodules.
 pub enum Frame {
     // Management frames
     Beacon(Beacon),
