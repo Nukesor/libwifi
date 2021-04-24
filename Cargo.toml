@@ -20,3 +20,15 @@ strum_macros = "0.20"
 
 #libwifi_macros = {path = "../libwifi_macros"}
 libwifi_macros = "0.0.1"
+
+[dev-dependencies]
+criterion = "0.3"
+rand = "0.8"
+
+[[bench]]
+name = "parse_beacon"
+harness = false
+
+[[bench]]
+name = "parse_data"
+harness = false

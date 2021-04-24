@@ -21,10 +21,10 @@ pub use crate::traits::*;
 /// This is the main function for IEE 802.11 parsing.
 pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
     let (input, frame_control) = parse_frame_control(input)?;
-    println!(
-        "Type/Subtype: {:?}, {:?}",
-        frame_control.frame_type, frame_control.frame_subtype
-    );
+    //println!(
+    //    "Type/Subtype: {:?}, {:?}",
+    //    frame_control.frame_type, frame_control.frame_subtype
+    //);
     //println!("Payload bytes: {:?}", &input);
 
     // Check which kind of frame sub-type we got
