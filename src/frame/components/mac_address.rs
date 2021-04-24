@@ -28,6 +28,14 @@ impl MacAddress {
     pub fn is_ipv6_multicast(&self) -> bool {
         self.0[0] == 51 && self.0[1] == 51
     }
+
+    /// A helper function to check whether the mac address is an actual device or just some kind of
+    /// "meta" mac address.
+    ///
+    /// This function is most likely not complete, but it already covers a cases.
+    pub fn is_real_device(&self) -> bool {
+        !(self.is_ipv6_multicast() || self.is_broadcast())
+    }
 }
 
 impl fmt::Display for MacAddress {
