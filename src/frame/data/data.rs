@@ -5,4 +5,5 @@ use crate::frame::components::*;
 #[derive(Clone, Debug, AddressHeader)]
 pub struct Data {
     pub header: DataHeader,
+    pub data: Vec<u8>,
 }

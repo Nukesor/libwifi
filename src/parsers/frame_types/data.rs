@@ -11,7 +11,10 @@ use crate::parsers::parse_data_header;
 /// - Source
 /// - Destination
 pub fn parse_data(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
-    let (_remaining, header) = parse_data_header(frame_control, input)?;
+    let (remaining, header) = parse_data_header(frame_control, input)?;
 
-    Ok(Frame::Data(Data { header }))
+    Ok(Frame::Data(Data {
+        header,
+        data: remaining.into(),
+    }))
 }
