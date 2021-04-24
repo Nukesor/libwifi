@@ -27,6 +27,7 @@ libwifi_macros = "0.0.1"
 
 [dev-dependencies]
 criterion = "0.3"
+doc-comment = "0.3"
 rand = "0.8"
 
 [[bench]]

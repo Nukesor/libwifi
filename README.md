@@ -34,7 +34,7 @@ This could be used as a guide-line for re-implementation.
 Parsing a frame is fairly straight forward:
 
 ```
-use libwifi::parse;
+use libwifi::parse_frame;
 
 let bytes = [
     180, 0, // FrameControl
@@ -43,7 +43,7 @@ let bytes = [
     20, 125, 218, 170, 84, 81, // Second Address
 ];
 
-match libwifi::parse(&bytes) {
+match libwifi::parse_frame(&bytes) {
     Ok(frame) => {
         println!("Got frame: {:?}", frame);
     }

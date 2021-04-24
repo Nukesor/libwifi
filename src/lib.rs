@@ -46,3 +46,6 @@ pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
         _ => Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec())),
     }
 }
+
+#[cfg(doctest)]
+doc_comment::doctest!("../README.md");
