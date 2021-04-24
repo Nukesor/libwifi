@@ -12,6 +12,10 @@ license = "MIT"
 keywords = ["wifi", "802_11", "parser", "frame"]
 readme = "README.md"
 
+[profile.release]
+lto = true
+codegen-units = 1
+
 [dependencies]
 log = "0.4"
 nom = "6"
