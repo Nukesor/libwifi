@@ -38,9 +38,9 @@ It consists of:
 
 1. The `ManagementHeader`.
     All management frames have the same header format.
-    Data frames hava consistent header format as well.
+    Data frames have a consistent header format as well.
     Control frames on the other hand are super variable and thereby don't have a proper representation of a header.
-2. `beacon_interval` is a field that's always present, which is why it has it's own field in the struct
+2. `beacon_interval` is a field that's always present, which is why it has it's own field in the struct.
 3. `capability_info` is such a field as well.
 4. `station_info` is used to parse and store variable length fields that are often sent with management frames.
     These fields always have an `id`, the length of the bytes for this field, and then the payload of the field.
