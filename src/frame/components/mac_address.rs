@@ -18,6 +18,16 @@ impl MacAddress {
     pub fn is_broadcast(&self) -> bool {
         self.0 == [255, 255, 255, 255, 255, 255]
     }
+
+    /// 33:33::::0 is used for ipv6 neighborhood discovery.
+    pub fn is_ipv6_neighborhood_discovery(&self) -> bool {
+        self.0 == [51, 51, 0, 0, 0, 0]
+    }
+
+    /// The 33:33::::0/16 space is reserved for ipv6 multicast
+    pub fn is_ipv6_multicast(&self) -> bool {
+        self.0[0] == 51 && self.0[1] == 51
+    }
 }
 
 impl fmt::Display for MacAddress {

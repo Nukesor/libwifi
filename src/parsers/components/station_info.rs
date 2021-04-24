@@ -19,7 +19,10 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
 
         match element_id {
             0 => {
-                station_info.ssid = Some(String::from_utf8_lossy(data).to_string());
+                let mut ssid = String::from_utf8_lossy(data).to_string();
+                // Remove null chars. Some APs seem to enjoy sending those.
+                ssid = ssid.replace('\0', " ");
+                station_info.ssid = Some(ssid);
             }
             1 => station_info.supported_rates = parse_supported_rates(data),
             _ => {
