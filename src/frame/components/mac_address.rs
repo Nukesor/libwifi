@@ -45,7 +45,7 @@ impl MacAddress {
     ///
     /// This function is most likely not complete, but it already covers a cases.
     pub fn is_real_device(&self) -> bool {
-        !(self.is_ipv6_multicast() || self.is_broadcast() || self.is_ipv4_multicast())
+        !(self.is_ipv6_multicast() || self.is_broadcast() || self.is_ipv4_multicast() || self.is_groupcast())
     }
 }
 
