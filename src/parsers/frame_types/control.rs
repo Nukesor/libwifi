@@ -29,12 +29,27 @@ pub fn parse_rts(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Err
 /// The general structure is:
 /// - FrameControl
 /// - Duration
-/// - Source
 /// - Destination
 pub fn parse_cts(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (_, (duration, address_1)) = tuple((take(2usize), parse_mac))(input)?;
 
     Ok(Frame::Cts(Cts {
+        frame_control,
+        duration: clone_slice::<2>(duration),
+        destination: address_1,
+    }))
+}
+
+/// Parse a [Frame::Cts] frame.
+///
+/// The general structure is:
+/// - FrameControl
+/// - Duration
+/// - Destination
+pub fn parse_ack(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
+    let (_, (duration, address_1)) = tuple((take(2usize), parse_mac))(input)?;
+
+    Ok(Frame::Ack(Ack {
         frame_control,
         duration: clone_slice::<2>(duration),
         destination: address_1,

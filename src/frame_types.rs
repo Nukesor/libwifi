@@ -19,11 +19,14 @@ pub enum FrameSubType {
     ReassociationResponse,
     ProbeRequest,
     ProbeResponse,
+    TimingAdvertisement,
     Beacon,
     Atim,
     Disassociation,
     Authentication,
     Deauthentication,
+    Action,
+    ActionNoAck,
 
     // Control subtypes
     Trigger,

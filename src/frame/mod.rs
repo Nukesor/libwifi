@@ -31,6 +31,7 @@ pub enum Frame {
     // Control Frames
     Rts(Rts),
     Cts(Cts),
+    Ack(Ack),
 
     // Data Frames
     Data(Data),
@@ -50,6 +51,7 @@ impl Frame {
             // Control
             Frame::Rts(inner) => inner.src(),
             Frame::Cts(inner) => inner.src(),
+            Frame::Ack(inner) => inner.src(),
 
             // Data
             Frame::Data(inner) => inner.src(),
@@ -69,6 +71,7 @@ impl Frame {
             // Control
             Frame::Rts(inner) => inner.dest(),
             Frame::Cts(inner) => inner.dest(),
+            Frame::Ack(inner) => inner.dest(),
 
             // Data
             Frame::Data(inner) => inner.dest(),
@@ -88,6 +91,7 @@ impl Frame {
             // Control
             Frame::Rts(inner) => inner.bssid(),
             Frame::Cts(inner) => inner.bssid(),
+            Frame::Ack(inner) => inner.bssid(),
 
             // Data
             Frame::Data(inner) => inner.bssid(),

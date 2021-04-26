@@ -58,11 +58,16 @@ fn management_frame_subtype(byte: u8) -> FrameSubType {
         3 => FrameSubType::ReassociationResponse,
         4 => FrameSubType::ProbeRequest,
         5 => FrameSubType::ProbeResponse,
+        6 => FrameSubType::TimingAdvertisement,
+        7 => FrameSubType::Reserved,
         8 => FrameSubType::Beacon,
         9 => FrameSubType::Atim,
         10 => FrameSubType::Disassociation,
         11 => FrameSubType::Authentication,
         12 => FrameSubType::Deauthentication,
+        13 => FrameSubType::Action,
+        14 => FrameSubType::ActionNoAck,
+        15 => FrameSubType::Reserved,
         _ => FrameSubType::UnHandled,
     }
 }
