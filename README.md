@@ -88,6 +88,69 @@ This includes features to:
 - [ ] Discover available channels
 
 
+### Implementation status
+
+- Management Frames
+    - [x] AssociationRequest,
+    - [x] AssociationResponse,
+    - [ ] ReassociationRequest,
+    - [ ] ReassociationResponse,
+    - [x] ProbeRequest,
+    - [x] ProbeResponse,
+    - [ ] TimingAdvertisement,
+    - [x] Beacon,
+    - [ ] Atim,
+    - [ ] Disassociation,
+    - [ ] Authentication,
+    - [ ] Deauthentication,
+    - [ ] Action,
+    - [ ] ActionNoAck,
+- Control Frames
+    - [ ] Trigger,
+    - [ ] Tack,
+    - [ ] BeamformingReportPoll,
+    - [ ] NdpAnnouncement,
+    - [ ] ControlFrameExtension,
+    - [ ] ControlWrapper,
+    - [ ] BlockAckRequest,
+    - [ ] BlockAck,
+    - [ ] PsPoll,
+    - [x] Rts,
+    - [x] Cts,
+    - [x] Ack,
+    - [ ] CfEnd,
+    - [ ] CfEndCfAck,
+- Data Frames
+    - [x] Data,
+    - [ ] DataCfAck,
+    - [ ] DataCfPoll,
+    - [ ] DataCfAckCfPoll,
+    - [ ] NullData,
+    - [ ] CfAck,
+    - [ ] CfPoll,
+    - [ ] CfAckCfPoll,
+    - [ ] QosData,
+    - [ ] QosDataCfAck,
+    - [ ] QosDataCfPoll,
+    - [ ] QosDataCfAckCfPoll,
+    - [ ] QosNull,
+    - [ ] QosCfPoll,
+    - [ ] QosCfAckCfPoll,
+- Frame Components
+    - [ ] Frame Control
+    - [x] Management Header
+    - [ ] Dynamic Management Header fields
+        - [x] SSID
+        - [x] Supported rates
+        - [x] Generic extraction of remaining fields
+        - [ ] All other fields
+    - [x] Data Header
+    - [ ] QoS Data Header
+
+
+There's a lot more to the IEE 802.11 spec and a lot of stuff needs to be done. \
+If you find that something you need is missing, consider creating a ticket and contributing :).
+
 ### Nightly
 
 This library requires nightly for now!
