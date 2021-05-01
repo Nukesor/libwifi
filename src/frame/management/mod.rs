@@ -1,11 +1,7 @@
-mod association_request;
-mod association_response;
+mod association;
 mod beacon;
-mod probe_request;
-mod probe_response;
+mod probe;
 
-pub use association_request::AssociationRequest;
-pub use association_response::AssociationResponse;
+pub use association::{AssociationRequest, AssociationResponse};
 pub use beacon::Beacon;
-pub use probe_request::ProbeRequest;
-pub use probe_response::ProbeResponse;
+pub use probe::{ProbeRequest, ProbeResponse};

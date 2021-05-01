@@ -1,4 +1,4 @@
-use super::{sequence_control, FrameControl, MacAddress, SequenceControl};
+use super::{FrameControl, MacAddress, SequenceControl};
 use crate::traits::Addresses;
 
 /// Representation of a management frame header. This format is used by all management frames!
