@@ -112,8 +112,8 @@ This includes features to:
     - [ ] NdpAnnouncement,
     - [ ] ControlFrameExtension,
     - [ ] ControlWrapper,
-    - [ ] BlockAckRequest,
-    - [ ] BlockAck,
+    - [x] BlockAckRequest,
+    - [x] BlockAck,
     - [ ] PsPoll,
     - [x] Rts,
     - [x] Cts,
@@ -137,15 +137,17 @@ This includes features to:
     - [ ] QosCfPoll,
     - [ ] QosCfAckCfPoll,
 - Frame Components
-    - [ ] Frame Control
+    - [x] Frame Control
+    - [x] Sequence Control
     - [x] Management Header
-    - [ ] Dynamic Management Header fields
+    - [x] Dynamic Management Header fields
         - [x] SSID
         - [x] Supported rates
         - [x] Generic extraction of remaining fields
         - [ ] All other fields
     - [x] Data Header
-    - [ ] QoS Data Header
+    - [x] QoS Data Header
+        - [ ] The QoS flags must still be properly parsed
 
 
 There's a lot more to the IEE 802.11 spec and a lot of stuff needs to be done. \

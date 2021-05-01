@@ -1,4 +1,4 @@
-use libwifi::frame::Frame;
+use libwifi::frame::*;
 use libwifi::parse_frame;
 
 #[test]
@@ -42,8 +42,8 @@ fn test_ack() {
 }
 
 #[test]
-fn test_single_tid_block_ack_request() {
-    let _payload = [
+fn test_single_tid_compressed_block_ack_request() {
+    let payload = [
         132, 0, // FrameControl
         58, 1, // Duration
         192, 238, 251, 75, 207, 58, // First Address
@@ -51,11 +51,19 @@ fn test_single_tid_block_ack_request() {
         4, 0, // BlockAckRequest Control
         160, 15, // Starting sequence number of the single TID
     ];
+
+    let frame = parse_frame(&payload).expect("Payload should be valid");
+    println!("{:?}", frame);
+    assert!(matches!(frame, Frame::BlockAckRequest(_)));
+
+    if let Frame::BlockAckRequest(inner) = frame {
+        assert!(matches!(inner.mode, BlockAckMode::CompressedBlockAck));
+    }
 }
 
 #[test]
 fn test_compressed_bitmap_block_ack() {
-    let _payload = [
+    let payload = [
         148, 0, // FrameControl
         0, 0, // Duration
         192, 238, 251, 75, 207, 58, // First Address
@@ -64,4 +72,12 @@ fn test_compressed_bitmap_block_ack() {
         144, 4, // BlockAck starting sequence control
         1, 0, 0, 0, 0, 0, 0, 0, // BlockAck Bitmap
     ];
+
+    let frame = parse_frame(&payload).expect("Payload should be valid");
+    println!("{:?}", frame);
+    assert!(matches!(frame, Frame::BlockAck(_)));
+
+    if let Frame::BlockAck(inner) = frame {
+        assert!(matches!(inner.mode, BlockAckMode::CompressedBlockAck));
+    }
 }

@@ -41,6 +41,7 @@ pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
         FrameSubType::Cts => parse_cts(frame_control, input),
         FrameSubType::Ack => parse_ack(frame_control, input),
         FrameSubType::BlockAckRequest => parse_block_ack_request(frame_control, input),
+        FrameSubType::BlockAck => parse_block_ack(frame_control, input),
 
         // Data
         FrameSubType::Data => parse_data(frame_control, input),

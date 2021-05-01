@@ -1,15 +1,24 @@
-use std::collections::HashMap;
-
 use crate::frame::components::{FrameControl, MacAddress, SequenceControl};
 use crate::Addresses;
 
 #[derive(Clone, Debug)]
 pub enum BlockAckMode {
+    /// Deprecated ack format, which uses a 128 byte map for acknowledgment.
     BasicBlockAck,
+    /// BlockAck used for simple TID acknowledgments, with a 8 byte map.
     CompressedBlockAck,
-    Reserved,
     /// Multiple Transaction Ids (TID)/Packets will should be acknowledged.
+    /// Uses compressed 8 byte maps for acknowledgment.
     MultiTidBlockAck,
+}
+
+#[derive(Clone, Debug)]
+pub enum BlockAckInfo {
+    /// A simple BlockAck response with an 128 bytes bitmap.
+    /// This is deprecated and should barely be used in practice.
+    Basic((u8, SequenceControl, [u8; 128])),
+    /// A vector of tuples of (TID, SequenceControl, 8byte Bitmap).
+    Compressed(Vec<(u8, SequenceControl, u64)>),
 }
 
 /// Used in a BlockAck session to acknowlede sent packets.
@@ -67,10 +76,15 @@ pub struct BlockAck {
     pub duration: [u8; 2],
     pub source: MacAddress,
     pub destination: MacAddress,
+    /// The acknowledgment policy flag.
+    ///
+    /// `true`: No immediate acknowledgment is required. \
+    /// `false`: Immediate acknowledgment is required.
+    pub policy: bool,
     pub mode: BlockAckMode,
     /// The TID's and the respective sequence control bytes, for which the BlockAck has been
     /// requested.
-    pub tids: HashMap<u8, SequenceControl>,
+    pub acks: BlockAckInfo,
 }
 
 impl Addresses for BlockAck {

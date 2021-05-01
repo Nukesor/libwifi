@@ -15,6 +15,9 @@ pub enum Error {
     Failure(String, Vec<u8>),
     #[error("There wasn't enough data. {}", .0)]
     Incomplete(String),
+
+    #[error("Libwifi cannot handle this specific protocol yet: {}", .0)]
+    UnhandledProtocol(String),
 }
 
 impl From<nom::Err<nom::error::Error<&[u8]>>> for Error {
