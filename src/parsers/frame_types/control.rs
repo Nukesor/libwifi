@@ -61,11 +61,8 @@ pub fn parse_ack(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Err
 
 /// Parse a [BlockAckRequest] frame.
 ///
-/// The general structure is:
-/// - FrameControl
-/// - Duration
-/// - Destination
-///
+/// Check the inline docs and the docs of [BlockAckRequest] for more information.
+/// This is a rather complicated one, but the docs should make things more clear.
 pub fn parse_block_ack_request(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (mut bar_information, (duration, destination, source, bar_control)) =
         tuple((take(2usize), parse_mac, parse_mac, take(2usize)))(input)?;
