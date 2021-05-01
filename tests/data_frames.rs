@@ -26,8 +26,11 @@ fn test_data() {
 #[test]
 fn test_null_data() {
     let _payload = [
-        72, 17, 60, 0, 156, 128, 223, 131, 16, 180, 252, 25, 16, 16, 128, 171, 156, 128, 223, 131,
-        16, 180, 128, 43,
+        72, 17, //
+        60, 0, //
+        156, 128, 223, 131, 16, 180, //
+        252, 25, 16, 16, 128, 171, //
+        156, 128, 223, 131, 16, 180, 128, 43,
     ];
 }
 
@@ -53,7 +56,7 @@ fn test_qos_data() {
 }
 #[test]
 fn test_qos_null() {
-    let _payload = [
+    let payload = [
         200, 1, // FrameControl
         58, 1, // Duration id
         248, 50, 228, 173, 71, 184, // First Address
@@ -62,4 +65,8 @@ fn test_qos_null() {
         80, 106, // Sequence Control
         0, 0, // QoS Header
     ];
+
+    let frame = parse_frame(&payload).expect("Payload should be valid");
+    println!("{:?}", frame);
+    assert!(matches!(frame, Frame::QosNull(_)));
 }

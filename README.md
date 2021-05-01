@@ -125,7 +125,7 @@ This includes features to:
     - [ ] DataCfAck,
     - [ ] DataCfPoll,
     - [ ] DataCfAckCfPoll,
-    - [ ] NullData,
+    - [x] NullData,
     - [ ] CfAck,
     - [ ] CfPoll,
     - [ ] CfAckCfPoll,
@@ -133,7 +133,7 @@ This includes features to:
     - [ ] QosDataCfAck,
     - [ ] QosDataCfPoll,
     - [ ] QosDataCfAckCfPoll,
-    - [ ] QosNull,
+    - [x] QosNull,
     - [ ] QosCfPoll,
     - [ ] QosCfAckCfPoll,
 - Frame Components

@@ -7,3 +7,8 @@ pub struct Data {
     pub header: DataHeader,
     pub data: Vec<u8>,
 }
+
+#[derive(Clone, Debug, AddressHeader)]
+pub struct NullData {
+    pub header: DataHeader,
+}

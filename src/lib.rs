@@ -45,7 +45,9 @@ pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
 
         // Data
         FrameSubType::Data => parse_data(frame_control, input),
+        FrameSubType::NullData => parse_null_data(frame_control, input),
         FrameSubType::QosData => parse_qos_data(frame_control, input),
+        FrameSubType::QosNull => parse_qos_null(frame_control, input),
         _ => Err(Error::UnhandledFrameSubtype(frame_control, input.to_vec())),
     }
 }

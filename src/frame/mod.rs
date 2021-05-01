@@ -37,7 +37,9 @@ pub enum Frame {
 
     // Data Frames
     Data(Data),
+    NullData(NullData),
     QosData(QosData),
+    QosNull(QosNull),
 }
 
 impl Frame {
@@ -59,7 +61,9 @@ impl Frame {
 
             // Data
             Frame::Data(inner) => inner.src(),
+            Frame::NullData(inner) => inner.src(),
             Frame::QosData(inner) => inner.src(),
+            Frame::QosNull(inner) => inner.src(),
         }
     }
 
@@ -81,7 +85,9 @@ impl Frame {
 
             // Data
             Frame::Data(inner) => inner.dest(),
+            Frame::NullData(inner) => inner.dest(),
             Frame::QosData(inner) => inner.dest(),
+            Frame::QosNull(inner) => inner.dest(),
         }
     }
 
@@ -103,7 +109,9 @@ impl Frame {
 
             // Data
             Frame::Data(inner) => inner.bssid(),
+            Frame::NullData(inner) => inner.bssid(),
             Frame::QosData(inner) => inner.bssid(),
+            Frame::QosNull(inner) => inner.bssid(),
         }
     }
 }
