@@ -42,23 +42,26 @@ fn test_ack() {
 }
 
 #[test]
-fn test_block_ack_request() {
+fn test_single_tid_block_ack_request() {
     let _payload = [
         132, 0, // FrameControl
         58, 1, // Duration
         192, 238, 251, 75, 207, 58, // First Address
         24, 29, 234, 198, 62, 190, // Second Address
-        4, 0, 160, 15, // FCS
+        4, 0, // BlockAckRequest Control
+        160, 15, // Starting sequence number of the single TID
     ];
 }
 
 #[test]
-fn test_block_ack() {
+fn test_compressed_bitmap_block_ack() {
     let _payload = [
         148, 0, // FrameControl
         0, 0, // Duration
         192, 238, 251, 75, 207, 58, // First Address
         248, 50, 228, 173, 71, 184, // Second Address
-        5, 0, 144, 4, 1, 0, 0, 0, 0, 0, 0, 0,
+        5, 0, // BlockAck Control
+        144, 4, // BlockAck starting sequence control
+        1, 0, 0, 0, 0, 0, 0, 0, // BlockAck Bitmap
     ];
 }

@@ -6,8 +6,6 @@ use crate::frame::components::FrameControl;
 use crate::frame_types::*;
 
 pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
-    // IEE 802.11 uses big-endian
-    // Since we use little-endian, we have to go from the back to the front.
     let (remaining, (frame_subtype, frame_type, protocol_version, flags)) =
         bits::<_, (u8, u8, u8, u8), Error<(&[u8], usize)>, _, _>(tuple((
             take(4usize),
@@ -24,7 +22,7 @@ pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
         FrameType::Management => management_frame_subtype(frame_subtype),
         FrameType::Control => control_frame_subtype(frame_subtype),
         FrameType::Data => data_frame_subtype(frame_subtype),
-        FrameType::Unknown => FrameSubType::UnHandled,
+        FrameType::Unknown => FrameSubType::Unhandled,
     };
 
     Ok((
@@ -68,7 +66,7 @@ fn management_frame_subtype(byte: u8) -> FrameSubType {
         13 => FrameSubType::Action,
         14 => FrameSubType::ActionNoAck,
         15 => FrameSubType::Reserved,
-        _ => FrameSubType::UnHandled,
+        _ => FrameSubType::Unhandled,
     }
 }
 
@@ -92,7 +90,7 @@ fn control_frame_subtype(byte: u8) -> FrameSubType {
         13 => FrameSubType::Ack,
         14 => FrameSubType::CfEnd,
         15 => FrameSubType::CfEndCfAck,
-        _ => FrameSubType::UnHandled,
+        _ => FrameSubType::Unhandled,
     }
 }
 
@@ -116,6 +114,6 @@ fn data_frame_subtype(byte: u8) -> FrameSubType {
         13 => FrameSubType::Reserved,
         14 => FrameSubType::QosCfPoll,
         15 => FrameSubType::QosCfAckCfPoll,
-        _ => FrameSubType::UnHandled,
+        _ => FrameSubType::Unhandled,
     }
 }

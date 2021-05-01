@@ -1,4 +1,4 @@
-use super::{FrameControl, MacAddress};
+use super::{sequence_control, FrameControl, MacAddress, SequenceControl};
 use crate::traits::Addresses;
 
 /// Representation of a management frame header. This format is used by all management frames!
@@ -33,7 +33,7 @@ pub struct ManagementHeader {
     pub address_1: MacAddress,
     pub address_2: MacAddress,
     pub address_3: MacAddress,
-    pub seq_ctl: [u8; 2],
+    pub sequence_control: SequenceControl,
 }
 
 /// Which address is used in which way, depends on a combination of
@@ -123,6 +123,8 @@ impl Addresses for ManagementHeader {
 /// byte 10-15: Address 2.
 /// byte 16-21: Address 3.
 /// byte 22-23: Sequence Control.
+/// byte 24-30: Address 4 (Exists if to_ds and from_ds is set)
+/// byte 31-32: Quality of Service bytes, only exists in QoS Data frames.
 #[derive(Clone, Debug)]
 pub struct DataHeader {
     pub frame_control: FrameControl,
@@ -130,7 +132,7 @@ pub struct DataHeader {
     pub address_1: MacAddress,
     pub address_2: MacAddress,
     pub address_3: MacAddress,
-    pub seq_ctl: [u8; 2],
+    pub sequence_control: SequenceControl,
     pub address_4: Option<MacAddress>,
     pub qos: Option<[u8; 2]>,
 }

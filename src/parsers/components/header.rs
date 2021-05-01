@@ -2,7 +2,7 @@ use nom::bytes::complete::take;
 use nom::combinator::opt;
 use nom::sequence::tuple;
 
-use super::{clone_slice, parse_mac};
+use super::{clone_slice, parse_mac, parse_sequence_control};
 use crate::error::Error;
 use crate::frame::components::{DataHeader, FrameControl, ManagementHeader};
 
@@ -11,11 +11,15 @@ pub fn parse_management_header(
     frame_control: FrameControl,
     input: &[u8],
 ) -> Result<(&[u8], ManagementHeader), Error> {
-    let (remaining, (duration, address_1, address_2, address_3, seq_ctl)) =
-        tuple((take(2usize), parse_mac, parse_mac, parse_mac, take(2usize)))(input)?;
+    let (remaining, (duration, address_1, address_2, address_3, sequence_control)) = tuple((
+        take(2usize),
+        parse_mac,
+        parse_mac,
+        parse_mac,
+        parse_sequence_control,
+    ))(input)?;
 
     let duration = clone_slice::<2>(duration);
-    let seq_ctl = clone_slice::<2>(seq_ctl);
 
     Ok((
         remaining,
@@ -25,7 +29,7 @@ pub fn parse_management_header(
             address_1,
             address_2,
             address_3,
-            seq_ctl,
+            sequence_control,
         },
     ))
 }
@@ -35,11 +39,16 @@ pub fn parse_data_header(
     frame_control: FrameControl,
     input: &[u8],
 ) -> Result<(&[u8], DataHeader), Error> {
-    let (mut remaining, (duration, address_1, address_2, address_3, seq_ctl)) =
-        tuple((take(2usize), parse_mac, parse_mac, parse_mac, take(2usize)))(input)?;
+    let (mut remaining, (duration, address_1, address_2, address_3, sequence_control)) =
+        tuple((
+            take(2usize),
+            parse_mac,
+            parse_mac,
+            parse_mac,
+            parse_sequence_control,
+        ))(input)?;
 
     let duration = clone_slice::<2>(duration);
-    let seq_ctl = clone_slice::<2>(seq_ctl);
 
     let mut address_4 = None;
     if frame_control.to_ds() && frame_control.from_ds() {
@@ -61,7 +70,7 @@ pub fn parse_data_header(
             address_1,
             address_2,
             address_3,
-            seq_ctl,
+            sequence_control,
             address_4,
             qos,
         },

@@ -3,12 +3,14 @@ use nom::IResult;
 
 use crate::frame::components::MacAddress;
 
-pub mod frame_control;
-pub mod header;
-pub mod station_info;
+mod frame_control;
+mod header;
+mod sequence_control;
+mod station_info;
 
 pub use frame_control::parse_frame_control;
 pub use header::*;
+pub use sequence_control::parse_sequence_control;
 pub use station_info::parse_station_info;
 
 pub fn parse_mac(input: &[u8]) -> IResult<&[u8], MacAddress> {

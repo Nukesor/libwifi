@@ -2,11 +2,11 @@
 /// For instance, MAC-Addresses, default headers, etc.
 pub mod components;
 /// Control frame structs
-pub mod control;
+mod control;
 /// Data frames structs
-pub mod data;
+mod data;
 /// Management frame structs
-pub mod management;
+mod management;
 
 pub use control::*;
 pub use data::*;
@@ -32,6 +32,8 @@ pub enum Frame {
     Rts(Rts),
     Cts(Cts),
     Ack(Ack),
+    BlockAckRequest(BlockAckRequest),
+    BlockAck(BlockAck),
 
     // Data Frames
     Data(Data),
@@ -52,6 +54,8 @@ impl Frame {
             Frame::Rts(inner) => inner.src(),
             Frame::Cts(inner) => inner.src(),
             Frame::Ack(inner) => inner.src(),
+            Frame::BlockAck(inner) => inner.src(),
+            Frame::BlockAckRequest(inner) => inner.src(),
 
             // Data
             Frame::Data(inner) => inner.src(),
@@ -72,6 +76,8 @@ impl Frame {
             Frame::Rts(inner) => inner.dest(),
             Frame::Cts(inner) => inner.dest(),
             Frame::Ack(inner) => inner.dest(),
+            Frame::BlockAck(inner) => inner.dest(),
+            Frame::BlockAckRequest(inner) => inner.dest(),
 
             // Data
             Frame::Data(inner) => inner.dest(),
@@ -92,6 +98,8 @@ impl Frame {
             Frame::Rts(inner) => inner.bssid(),
             Frame::Cts(inner) => inner.bssid(),
             Frame::Ack(inner) => inner.bssid(),
+            Frame::BlockAck(inner) => inner.bssid(),
+            Frame::BlockAckRequest(inner) => inner.bssid(),
 
             // Data
             Frame::Data(inner) => inner.bssid(),

@@ -63,7 +63,7 @@ pub enum FrameSubType {
 
     // Special subtypes
     Reserved,
-    UnHandled,
+    Unhandled,
 }
 
 impl FrameSubType {
