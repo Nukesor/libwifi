@@ -25,19 +25,24 @@ impl MacAddress {
         self.0[0] == 1 && self.0[1] == 128 && self.0[2] == 194
     }
 
-    /// The 01:00:5e::0/24 space is reserved for ipv4 multicast
+    /// The 01:00:5e::0/18 space is reserved for ipv4 multicast
     pub fn is_ipv4_multicast(&self) -> bool {
         self.0[0] == 1 && self.0[1] == 0 && self.0[2] == 94
     }
 
-    /// 33:33::0/32 is used for ipv6 neighborhood discovery.
+    /// 33:33::0/24 is used for ipv6 neighborhood discovery.
     pub fn is_ipv6_neighborhood_discovery(&self) -> bool {
         self.0 == [51, 51, 0, 0, 0, 0]
     }
 
-    /// The 33:33::0/32 space is reserved for ipv6 multicast
+    /// The 33:33::0/24 space is reserved for ipv6 multicast
     pub fn is_ipv6_multicast(&self) -> bool {
         self.0[0] == 51 && self.0[1] == 51
+    }
+
+    /// The 01:80:c2::0/18 space is reserved for spanning-tree requests.
+    pub fn is_spanning_tree(&self) -> bool {
+        self.0[0] == 1 && self.0[1] == 128 && self.0[2] == 194
     }
 
     /// A helper function to check whether the mac address is an actual device or just some kind of
@@ -45,7 +50,11 @@ impl MacAddress {
     ///
     /// This function is most likely not complete, but it already covers a cases.
     pub fn is_real_device(&self) -> bool {
-        !(self.is_ipv6_multicast() || self.is_broadcast() || self.is_ipv4_multicast() || self.is_groupcast())
+        !(self.is_ipv6_multicast()
+            || self.is_broadcast()
+            || self.is_ipv4_multicast()
+            || self.is_groupcast()
+            || self.is_spanning_tree())
     }
 }
 
