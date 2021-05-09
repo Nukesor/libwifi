@@ -50,11 +50,13 @@ pub fn parse_data_header(
 
     let duration = clone_slice::<2>(duration);
 
+    // The forth address only exists if both `from_ds` and `to_ds` is set.
     let mut address_4 = None;
     if frame_control.to_ds() && frame_control.from_ds() {
         (remaining, address_4) = opt(parse_mac)(remaining)?;
     };
 
+    // If this is a Qos frame subtype, we go ahead and parse any Qos related info.
     let mut qos = None;
     if frame_control.frame_subtype.is_qos() {
         let (_remaining, qos_bytes) = take(2usize)(remaining)?;

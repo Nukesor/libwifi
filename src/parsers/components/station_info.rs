@@ -5,6 +5,17 @@ use nom::IResult;
 
 use crate::frame::components::StationInfo;
 
+/// Parse variable length and variable field information.
+/// The general structure of the data looks like this:
+///
+/// 1 byte: Element id
+/// 1 byte: Element length (up to 255 bytes)
+/// $element_length bytes: Element data
+///
+/// This format is only used in management frames.
+///
+/// There might be multiple elements with the same element id,
+/// which is why StationInfo uses a Vec instead of BTreeMap as a data structure.
 pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
     let mut station_info = StationInfo::default();
 
@@ -26,7 +37,7 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
             }
             1 => station_info.supported_rates = parse_supported_rates(data),
             _ => {
-                station_info.data.insert(element_id, data.to_vec());
+                station_info.data.push((element_id, data.to_vec()));
             }
         };
 

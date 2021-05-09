@@ -131,7 +131,7 @@ This includes features to:
     - [ ] CfAck,
     - [ ] CfPoll,
     - [ ] CfAckCfPoll,
-    - [ ] QosData,
+    - [x] QosData,
     - [ ] QosDataCfAck,
     - [ ] QosDataCfPoll,
     - [ ] QosDataCfAckCfPoll,

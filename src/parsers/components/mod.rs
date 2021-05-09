@@ -13,6 +13,8 @@ pub use header::*;
 pub use sequence_control::parse_sequence_control;
 pub use station_info::parse_station_info;
 
+/// Parse mac addresses.
+/// Just take 6 bytes, clone them and create a new MacAddress struct from those bytes.
 pub fn parse_mac(input: &[u8]) -> IResult<&[u8], MacAddress> {
     let (remaining, bytes) = take(6usize)(input)?;
     Ok((remaining, MacAddress(clone_slice::<6>(bytes))))

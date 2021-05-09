@@ -5,6 +5,8 @@ use nom::{complete::take, error::Error};
 use crate::frame::components::FrameControl;
 use crate::frame_types::*;
 
+/// Parse the frame control of a frame.
+/// The format is the same for ALL frames, which makes this part quite unique.
 pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
     let (remaining, (frame_subtype, frame_type, protocol_version, flags)) =
         bits::<_, (u8, u8, u8, u8), Error<(&[u8], usize)>, _, _>(tuple((

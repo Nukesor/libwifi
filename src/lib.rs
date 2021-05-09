@@ -1,13 +1,13 @@
 #![feature(destructuring_assignment)]
 /// Libwifi's own [Error](error::Error) implementation
 pub mod error;
-/// The [Frame](frame::Frame) enum and all structs that represent each type of possible frame.
+/// The [Frame](frame::Frame) enum and all frame structs.
 pub mod frame;
-/// Enums that represent all frame types and frame sub-types.
+/// Enums representing frame types and frame subtypes.
 mod frame_types;
-/// Contains [nom] parsers for internal usage.
+/// [nom] parsers for internal usage.
 mod parsers;
-/// Contains all traits provided by this library.
+/// All traits used or provided by this library.
 mod traits;
 
 use crate::error::Error;
@@ -18,7 +18,9 @@ pub use crate::frame::Frame;
 pub use crate::frame_types::*;
 pub use crate::traits::*;
 
-/// This is the main function for IEE 802.11 parsing.
+/// Parse IEE 802.11 frames from raw bytes.
+///
+/// This function doesn't do FCS checks. These need to be done separately.
 pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
     let (input, frame_control) = parse_frame_control(input)?;
     //println!(

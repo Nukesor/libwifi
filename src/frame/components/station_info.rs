@@ -21,8 +21,8 @@ pub struct StationInfo {
     /// If the sender included a SSID, it will be in here.
     pub ssid: Option<String>,
     /// This map contains all fields that aren't explicitly parsed by us.
-    /// The format is BTreeMap<FieldId, PayloadBytes>.
+    /// The format is Vec<(FieldId, PayloadBytes)>.
     ///
     /// Please consider to create a PR, if you write a parser for a new field :).
-    pub data: BTreeMap<u8, Vec<u8>>,
+    pub data: Vec<(u8, Vec<u8>)>,
 }
