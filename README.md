@@ -29,6 +29,8 @@ For instance, the [wireless-tools](https://github.com/HewlettPackard/wireless-to
 This could be used as a guide-line for re-implementation.
 
 
+The project is still under heavy development, and a lot of features are missing, but it should be a good foundation for a proper wifi library :).
+
 ### How to use it
 
 Parsing a frame is fairly straight forward:
