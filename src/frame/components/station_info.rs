@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 #[derive(Clone, Debug, Default)]
 /// StationInfo is used to parse and store variable length fields that are often sent
 /// with management frames.
