@@ -93,11 +93,8 @@ impl std::str::FromStr for MacAddress {
             return Err(MacParseError::InvalidLength);
         }
 
-        let mut count = 0;
-        for byte in bytes {
+        for (count, byte) in bytes.iter().enumerate() {
             array[count] = u8::from_str_radix(byte, 16).map_err(|_| MacParseError::InvalidDigit)?;
-
-            count += 1;
         }
 
         Ok(MacAddress(array))

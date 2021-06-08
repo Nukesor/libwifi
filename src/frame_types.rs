@@ -68,15 +68,15 @@ pub enum FrameSubType {
 
 impl FrameSubType {
     pub fn is_qos(&self) -> bool {
-        match self {
+        matches!(
+            self,
             FrameSubType::QosData
-            | FrameSubType::QosDataCfAck
-            | FrameSubType::QosDataCfPoll
-            | FrameSubType::QosDataCfAckCfPoll
-            | FrameSubType::QosNull
-            | FrameSubType::QosCfPoll
-            | FrameSubType::QosCfAckCfPoll => true,
-            _ => false,
-        }
+                | FrameSubType::QosDataCfAck
+                | FrameSubType::QosDataCfPoll
+                | FrameSubType::QosDataCfAckCfPoll
+                | FrameSubType::QosNull
+                | FrameSubType::QosCfPoll
+                | FrameSubType::QosCfAckCfPoll,
+        )
     }
 }
