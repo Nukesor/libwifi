@@ -3,21 +3,15 @@
 `libwifi` doesn't support parsing all existing 802.11 frames yet!
 But its design and parsing strategy allows to easily extend the current logic and add new frames :).
 
-## Creating a New Frame
+## Creating a New Frame Variant
 
 All frames are represented by the `Frame` enum, which is located in `src/frame/mod.rs`.
-Every frame sub-type has it's own variant and a struct representing the data in that variant.
-
-The structs contained in those variants are located in the subdirectories of `/src/frame/`.
-They are ordered by the frame type, namely `management`, `data` and `control`.
-
-### New Variant
-
-Every frame sub-type has its own variant in the `Frame` enum.
+Every frame sub-type has it's own variant and a struct representing the data of particular type.
 Thereby, to add a new frame sub-type, you have to add add a new variant to `Frame`.
 It should have the same name as the `FrameSubtype` enum equivalent.
 
-This variant is also going to contain the struct that will represent the new frame.
+The structs contained in those variants are located in the subdirectories of `/src/frame/`.
+They are ordered by the frame type, namely `management`, `data` or `control`.
 
 ### The Struct
 
@@ -39,8 +33,8 @@ It consists of:
 1. The `ManagementHeader`.
     All management frames have the same header format.
     Data frames have a consistent header format as well.
-    Control frames on the other hand are super variable and thereby don't have a proper representation of a header.
-2. `beacon_interval` is a field that's always present, which is why it has it's own field in the struct.
+    Control frames on the other hand are super variable and thereby don't have a proper header representation.
+2. `beacon_interval` is a field that's always present for this frame, which is why it has it's own field in the struct.
 3. `capability_info` is such a field as well.
 4. `station_info` is used to parse and store variable length fields that are often sent with management frames.
     These fields always have an `id`, the length of the bytes for this field, and then the payload of the field.
@@ -56,7 +50,7 @@ Another example is the highly complex header of management frames.
 This data only makes sense if you look at it in a cohesive way.
 
 For this reason, non-trivial data is stored in their own structs, which are called _components_.
-All possible components are located in `src/components`.
+All possible components are located in `src/frame/components`.
 
 Each component has their own parser in `/src/parsers/components/`, which will later be used by the actual frame parser functions.
 
