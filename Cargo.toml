@@ -3,7 +3,7 @@ name = "libwifi"
 description = "A library for parsing IEEE 802.11 frames and handling wifi interfaces."
 version = "0.3.1-alpha.0"
 authors = ["Arne Beer <contact@arne.beer>"]
-edition = "2018"
+edition = "2021"
 
 homepage = "https://github.com/nukesor/libwifi"
 repository = "https://github.com/nukesor/libwifi"
@@ -18,9 +18,9 @@ codegen-units = 1
 
 [dependencies]
 log = "0.4"
-nom = "6"
+nom = "7"
 thiserror = "1.0"
-strum_macros = "0.20"
+strum_macros = "0.22"
 enum_dispatch = "0.3"
 
 #libwifi_macros = {path = "../libwifi_macros"}
