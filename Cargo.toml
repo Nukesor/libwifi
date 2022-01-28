@@ -1,7 +1,7 @@
 [package]
 name = "libwifi"
 description = "A library for parsing IEEE 802.11 frames and handling wifi interfaces."
-version = "0.3.1-alpha.0"
+version = "0.3.1"
 authors = ["Arne Beer <contact@arne.beer>"]
 edition = "2021"
 
@@ -16,6 +16,9 @@ readme = "README.md"
 lto = true
 codegen-units = 1
 
+[workspace]
+members = ["libwifi_macros"]
+
 [dependencies]
 log = "0.4"
 nom = "7"
@@ -24,7 +27,7 @@ strum_macros = "0.23"
 enum_dispatch = "0.3"
 
 #libwifi_macros = {path = "../libwifi_macros"}
-libwifi_macros = "0.0.1"
+libwifi_macros = { version="0.0.2", path="libwifi_macros" }
 
 [dev-dependencies]
 criterion = "0.3"
