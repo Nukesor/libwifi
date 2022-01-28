@@ -26,7 +26,6 @@ thiserror = "1.0"
 strum_macros = "0.23"
 enum_dispatch = "0.3"
 
-#libwifi_macros = {path = "../libwifi_macros"}
 libwifi_macros = { version="0.0.2", path="libwifi_macros" }
 
 [dev-dependencies]
