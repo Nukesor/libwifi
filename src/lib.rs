@@ -1,4 +1,3 @@
-#![feature(destructuring_assignment)]
 /// Libwifi's own [Error](error::Error) implementation
 pub mod error;
 /// The [Frame](frame::Frame) enum and all frame structs.

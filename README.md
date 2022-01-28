@@ -154,13 +154,3 @@ This includes features to:
 
 There's a lot more to the IEE 802.11 spec and a lot of stuff needs to be done. \
 If you find that something you need is missing, consider creating a ticket and contributing :).
-
-### Nightly
-
-This library requires nightly for now!
-
-It uses the `destructuring_assignment` feature, which adds a lot of convenience when working with the `nom` library. \
-
-If you want to start using it in a professional environment, I'm open to PRs that refactor the usages of this feature.
-Shouldn't take longer than a few minutes to do. \
-Until then, I'm hoping that this feature will be included to stable soon :).
