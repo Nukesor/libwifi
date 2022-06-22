@@ -21,8 +21,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        #toolchain: [stable, nightly]
-        toolchain: [nightly]
+        toolchain: [stable]
 
     steps:
       - name: Checkout code
