@@ -8,3 +8,10 @@ ignore:
   - "LICENSE"
   - "Cargo.lock"
   - "Cargo.toml"
+
+codecov:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 2%
