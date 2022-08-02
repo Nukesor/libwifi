@@ -29,6 +29,13 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
         (input, data) = take(length)(input)?;
         //println!("Extracted data: {:?}", data);
 
+        // Create list of tagged parameters.
+        match element_id {
+            // Don't match extended tags.
+            id if id != 255 => station_info.tagged_parameters.push(element_id),
+            _ => {},
+        };
+
         match element_id {
             0 => {
                 let mut ssid = String::from_utf8_lossy(data).to_string();
