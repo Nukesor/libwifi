@@ -27,6 +27,7 @@ strum_macros = "0.24"
 enum_dispatch = "0.3"
 
 libwifi_macros = { version="0.0.2", path="libwifi_macros" }
+hex = "0.4.3"
 
 [dev-dependencies]
 criterion = "0.3"

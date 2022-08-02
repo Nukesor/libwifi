@@ -2,6 +2,7 @@ use nom::bytes::complete::take;
 use nom::number::complete::u8 as get_u8;
 use nom::sequence::tuple;
 use nom::IResult;
+use hex::encode;
 
 use crate::frame::components::StationInfo;
 
@@ -36,6 +37,11 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                 station_info.ssid = Some(ssid);
             }
             1 => station_info.supported_rates = parse_supported_rates(data),
+            45 => {
+                station_info.ht_capabilities_info = Some(network_endian_format(&data[0..2]));
+                station_info.ht_a_mpdu_parameters = Some(network_endian_format(&data[2..3]));
+                station_info.ht_rx_mcs = Some(network_endian_format(&data[3..7]));
+            }   
             _ => {
                 station_info.data.push((element_id, data.to_vec()));
             }
@@ -74,4 +80,12 @@ fn parse_supported_rates(input: &[u8]) -> Vec<f32> {
     }
 
     rates
+}
+
+// Used to translate a borrowed u8 slice into a network endian (big) formatted hexadecimal string.
+fn network_endian_format(input: &[u8]) -> String {
+    let mut reversed_info: Vec<u8> = Vec::new();
+    reversed_info.extend(input.iter().rev());
+
+    format!("0x{}", encode(&reversed_info))
 }

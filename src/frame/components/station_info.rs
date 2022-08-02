@@ -18,6 +18,12 @@ pub struct StationInfo {
     pub supported_rates: Vec<f32>,
     /// If the sender included a SSID, it will be in here.
     pub ssid: Option<String>,
+    // The HT Capabilities Information bitmask, if transmitted.
+    pub ht_capabilities_info: Option<String>,
+    // The HT Capabilities A-MPDU parameters bitmask, if transmitted.
+    pub ht_a_mpdu_parameters: Option<String>,
+    // The HT Capabilities RX Supported Modulation and Coding Scheme bitmask, if transmitted.
+    pub ht_rx_mcs: Option<String>,
     /// This map contains all fields that aren't explicitly parsed by us.
     /// The format is Vec<(FieldId, PayloadBytes)>.
     ///
