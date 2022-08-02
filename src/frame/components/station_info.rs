@@ -13,6 +13,9 @@
 /// Since we cannot handle all all those elements, the bytes of all unhandled elements will
 /// be saved in the `data` field under the respectiv element id.
 pub struct StationInfo {
+    // The ordered list of tagged parameters transmitted by the station.
+    // Empty if no parameters were transmitted.
+    pub tagged_parameters: Vec<u8>,
     /// The transmission rates that are supported by the station.
     /// Empty if no rates were transmitted.
     pub supported_rates: Vec<f32>,
