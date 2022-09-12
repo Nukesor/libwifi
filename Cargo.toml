@@ -29,7 +29,7 @@ enum_dispatch = "0.3"
 libwifi_macros = { version="0.0.2", path="libwifi_macros" }
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "0.4"
 doc-comment = "0.3"
 rand = "0.8"
 
