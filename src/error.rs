@@ -29,7 +29,7 @@ impl From<nom::Err<nom::error::Error<&[u8]>>> for Error {
         match error {
             nom::Err::Incomplete(needed) => match needed {
                 Needed::Size(size) => {
-                    Error::Incomplete(format!("At least {} bytes are missing", size))
+                    Error::Incomplete(format!("At least {size} bytes are missing"))
                 }
                 Needed::Unknown => Error::Incomplete(String::new()),
             },
