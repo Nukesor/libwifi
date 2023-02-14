@@ -89,7 +89,7 @@ mod tests {
             5 => frame_control.more_data(),
             6 => frame_control.wep(),
             7 => frame_control.order(),
-            _ => panic!("Unhandled bit {}", bit),
+            _ => panic!("Unhandled bit {bit}"),
         }
     }
 

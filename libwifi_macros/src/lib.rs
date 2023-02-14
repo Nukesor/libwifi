@@ -9,7 +9,7 @@ mod inner;
 /// This macro is only designed for internal usage in the [libwifi](https://docs.rs/libwifi/latest/libwifi/) crate.
 ///
 /// How to use:
-/// ```
+/// ```rust,ignore
 /// #[derive(Clone, Debug, AddressHeader)]
 /// pub struct AssociationRequest {
 ///     pub header: ManagementHeader,
@@ -20,7 +20,7 @@ mod inner;
 /// ```
 ///
 /// The new generated code will look like this:
-/// ```
+/// ```rust,ignore
 /// impl crate::Addresses for AssociationRequest {
 ///     fn src(&self) -> Option<&MacAddress> {
 ///         self.header.src()

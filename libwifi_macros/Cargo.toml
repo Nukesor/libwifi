@@ -2,15 +2,12 @@
 name = "libwifi_macros"
 version = "0.0.2"
 description = "A library providing macros for the libwifi crate."
-authors = ["Arne Beer <contact@arne.beer>"]
-edition = "2018"
-
-homepage = "https://github.com/nukesor/libwifi_macros"
-repository = "https://github.com/nukesor/libwifi_macros"
-documentation = "https://docs.rs/libwifi_macros/"
-license = "MIT"
-keywords = ["libwifi", "macros"]
-readme = "README.md"
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [lib]
 proc-macro = true

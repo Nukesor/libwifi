@@ -11,7 +11,7 @@ fn test_rts() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::Rts(_)));
 }
 
@@ -24,7 +24,7 @@ fn test_cts() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::Cts(_)));
 }
 
@@ -37,7 +37,7 @@ fn test_ack() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::Ack(_)));
 }
 
@@ -53,7 +53,7 @@ fn test_single_tid_compressed_block_ack_request() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::BlockAckRequest(_)));
 
     if let Frame::BlockAckRequest(inner) = frame {
@@ -74,7 +74,7 @@ fn test_compressed_bitmap_block_ack() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::BlockAck(_)));
 
     if let Frame::BlockAck(inner) = frame {

@@ -37,7 +37,7 @@ fn test_beacon() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::Beacon(_)));
 
     if let Frame::Beacon(beacon) = frame {
@@ -62,7 +62,7 @@ fn test_probe_request() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::ProbeRequest(_)));
 }
 
@@ -97,7 +97,7 @@ fn test_probe_response() {
     ];
 
     let frame = parse_frame(&payload).expect("Payload should be valid");
-    println!("{:?}", frame);
+    println!("{frame:?}");
     assert!(matches!(frame, Frame::ProbeResponse(_)));
 
     if let Frame::ProbeResponse(response) = frame {

@@ -54,4 +54,4 @@ pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
 }
 
 #[cfg(doctest)]
-doc_comment::doctest!("../README.md");
+doc_comment::doctest!("../../README.md");
