@@ -1,5 +1,5 @@
 use anyhow::Result;
-use clap::Clap;
+use clap::Parser;
 
 mod device;
 mod parse;
@@ -7,8 +7,8 @@ mod parse;
 use device::get_capture;
 use parse::handle_packet;
 
-#[derive(Clap, Debug)]
-#[clap(name = "Demo", about = "Catch some stuff", author, version)]
+#[derive(Parser, Debug)]
+#[command(name = "Demo", about = "Catch some stuff", author, version)]
 pub struct CliArguments {
     /// The device you want to listen on (e.g. [wlan0, wlp3s0])
     pub device: String,
@@ -22,7 +22,7 @@ fn main() -> Result<()> {
 
     let mut capture = get_capture(&opt.device)?;
 
-    while let Ok(packet) = capture.next() {
+    while let Ok(packet) = capture.next_packet() {
         handle_packet(packet)?;
     }
 

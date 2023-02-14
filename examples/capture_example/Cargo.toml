@@ -2,16 +2,12 @@
 name = "capture_example"
 version = "0.1.0"
 authors = ["Arne Beer <contact@arne.beer>"]
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+edition = "2021"
 
 [dependencies]
 anyhow = "1"
-better-panic = "0.2"
-clap = "3.0.0-beta.2"
-
-# Wifi related
-libwifi = { path = "../../" }
-pcap = { version = "0.8", features = ['capture-stream'] }
+better-panic = "0.3"
+clap = { version = "4", features = ["derive", "cargo"] }
+libwifi = { path = "../../libwifi" }
+pcap = { version = "1", features = ['capture-stream'] }
 radiotap = "1.3"

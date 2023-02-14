@@ -8,23 +8,22 @@ pub fn handle_packet(packet: Packet) -> Result<()> {
         Ok(radiotap) => radiotap,
         Err(error) => {
             println!(
-                "Couldn't read packet data with Radiotap: {:?}, error {:?}",
-                &packet.data, error
+                "Couldn't read packet data with Radiotap: {:?}, error {error:?}",
+                &packet.data
             );
             return Ok(());
         }
     };
 
     let payload = &packet.data[radiotap.header.length..];
-    match libwifi::parse(&payload) {
+    match libwifi::parse_frame(payload) {
         Ok(frame) => {
-            println!("Got frame: {:?}", frame);
+            println!("Got frame: {frame:?}");
         }
         Err(err) => {
-            println!("Error during parsing :\n{}", err);
-            match err {
-                libwifi::error::Error::Failure(_, data) => println!("{:?}", data),
-                _ => (),
+            println!("Error during parsing :\n{err}");
+            if let libwifi::error::Error::Failure(_, data) = err {
+                println!("{data:?}")
             }
         }
     };

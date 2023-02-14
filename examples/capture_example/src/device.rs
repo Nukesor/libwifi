@@ -31,5 +31,5 @@ fn find_device_by_name(name: &str) -> Result<Device> {
         }
     }
 
-    bail!("Couldn't find device with name {}", name)
+    bail!("Couldn't find device with name '{name}'")
 }
