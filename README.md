@@ -48,10 +48,10 @@ let bytes = [
 
 match libwifi::parse_frame(&bytes) {
     Ok(frame) => {
-        println!("Got frame: {:?}", frame);
+        println!("Got frame: {frame:?}");
     }
     Err(err) => {
-        println!("Error during parsing :\n{}", err);
+        println!("Error during parsing :\n{err:?}");
     }
 };
 ```
