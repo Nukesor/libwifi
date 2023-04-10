@@ -11,7 +11,7 @@ There's an architectural/contribution guide in `docs/Frame.md` and pull requests
 
 Covering the whole spectrum of possible 802.11 frames or all different implementations of wifi tools out there is an impossible task for a single person, let's try to tackle this together!
 
-### What is Libwifi
+## What is Libwifi
 
 The first goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
 
@@ -20,6 +20,7 @@ This includes consistent and intuitive structs representing the structure of a g
 However, this doesn't mean that this library [isn't quite fast anyway ;)](https://github.com/Nukesor/libwifi#performance).
 
 The second goal is to provide an unified API to:
+
 1. query information about your wifi interfaces (iwlist equivalent).
 2. set attributes and configure your wifi interfaces (iwconfig equivalent).
 
@@ -28,16 +29,16 @@ However, a native re-implementation of those tools is desired in a long-term man
 For instance, the [wireless-tools](https://github.com/HewlettPackard/wireless-tools) are a great C-library with a lot of documentation and very will structured code.
 This could be used as a guide-line for re-implementation.
 
-
 The project is still under heavy development, and a lot of features are missing, but it should be a good foundation for a proper wifi library :).
 
-### How to use it
+## How to use it
 
 Parsing a frame is fairly straight forward:
 
-```
+```rs
 use libwifi::parse_frame;
 
+// A simple RTS frame
 let bytes = [
     180, 0, // FrameControl
     158, 0, // Duration
@@ -57,7 +58,7 @@ match libwifi::parse_frame(&bytes) {
 
 A full example on how to capture, process and parse wifi traffic can be found in the `examples` directory.
 
-### Performance
+## Performance
 
 There are a few benches in the `benches` folder.
 
@@ -72,15 +73,15 @@ If we take this as a rough guideline, you can roughly expect a million frames pe
 **Disclaimer:** This will most likely become slower, as more missing features/parsers will be added to the library.
     Anyhow, I don't expect this to drop below 100k frames/s.
 
-### Roadmap and TODOs
+## Roadmap and TODOs
 
-**Parser and Frames**
+### Parser and Frames
 
 - [ ] Implement basic parsers for all frame subtypes.
 - [ ] Add specialized parsers for fields that are currently generically handled by the `StationInfo` struct.
 - [ ] Handle all edge-cases (there are a lot and I'll need help!)
 
-**Interface handling**
+### Interface handling
 
 I would love to add proper interface handling to the library.
 This includes features to:
@@ -89,68 +90,66 @@ This includes features to:
 - [ ] Switch channels
 - [ ] Discover available channels
 
-
 ### Implementation status
 
 - Management Frames
-    - [x] AssociationRequest,
-    - [x] AssociationResponse,
-    - [ ] ReassociationRequest,
-    - [ ] ReassociationResponse,
-    - [x] ProbeRequest,
-    - [x] ProbeResponse,
-    - [ ] TimingAdvertisement,
-    - [x] Beacon,
-    - [ ] Atim,
-    - [ ] Disassociation,
-    - [ ] Authentication,
-    - [ ] Deauthentication,
-    - [ ] Action,
-    - [ ] ActionNoAck,
+  - [x] AssociationRequest,
+  - [x] AssociationResponse,
+  - [ ] ReassociationRequest,
+  - [ ] ReassociationResponse,
+  - [x] ProbeRequest,
+  - [x] ProbeResponse,
+  - [ ] TimingAdvertisement,
+  - [x] Beacon,
+  - [ ] Atim,
+  - [ ] Disassociation,
+  - [ ] Authentication,
+  - [ ] Deauthentication,
+  - [ ] Action,
+  - [ ] ActionNoAck,
 - Control Frames
-    - [ ] Trigger,
-    - [ ] Tack,
-    - [ ] BeamformingReportPoll,
-    - [ ] NdpAnnouncement,
-    - [ ] ControlFrameExtension,
-    - [ ] ControlWrapper,
-    - [x] BlockAckRequest,
-    - [x] BlockAck,
-    - [ ] PsPoll,
-    - [x] Rts,
-    - [x] Cts,
-    - [x] Ack,
-    - [ ] CfEnd,
-    - [ ] CfEndCfAck,
+  - [ ] Trigger,
+  - [ ] Tack,
+  - [ ] BeamformingReportPoll,
+  - [ ] NdpAnnouncement,
+  - [ ] ControlFrameExtension,
+  - [ ] ControlWrapper,
+  - [x] BlockAckRequest,
+  - [x] BlockAck,
+  - [ ] PsPoll,
+  - [x] Rts,
+  - [x] Cts,
+  - [x] Ack,
+  - [ ] CfEnd,
+  - [ ] CfEndCfAck,
 - Data Frames
-    - [x] Data,
-    - [ ] DataCfAck,
-    - [ ] DataCfPoll,
-    - [ ] DataCfAckCfPoll,
-    - [x] NullData,
-    - [ ] CfAck,
-    - [ ] CfPoll,
-    - [ ] CfAckCfPoll,
-    - [x] QosData,
-    - [ ] QosDataCfAck,
-    - [ ] QosDataCfPoll,
-    - [ ] QosDataCfAckCfPoll,
-    - [x] QosNull,
-    - [ ] QosCfPoll,
-    - [ ] QosCfAckCfPoll,
+  - [x] Data,
+  - [ ] DataCfAck,
+  - [ ] DataCfPoll,
+  - [ ] DataCfAckCfPoll,
+  - [x] NullData,
+  - [ ] CfAck,
+  - [ ] CfPoll,
+  - [ ] CfAckCfPoll,
+  - [x] QosData,
+  - [ ] QosDataCfAck,
+  - [ ] QosDataCfPoll,
+  - [ ] QosDataCfAckCfPoll,
+  - [x] QosNull,
+  - [ ] QosCfPoll,
+  - [ ] QosCfAckCfPoll,
 - Frame Components
-    - [x] Frame Control
-    - [x] Sequence Control
-    - [x] Management Header
-    - [x] Dynamic Management Header fields
-        - [x] SSID
-        - [x] Supported rates
-        - [x] Generic extraction of remaining fields
-        - [ ] All other fields
-    - [x] Data Header
-    - [x] QoS Data Header
-        - [ ] The QoS flags must still be properly parsed
-
+  - [x] Frame Control
+  - [x] Sequence Control
+  - [x] Management Header
+  - [x] Dynamic Management Header fields
+    - [x] SSID
+    - [x] Supported rates
+    - [x] Generic extraction of remaining fields
+    - [ ] All other fields
+  - [x] Data Header
+  - [x] QoS Data Header
+    - [ ] The QoS flags must still be properly parsed
 
 There's a lot more to the IEE 802.11 spec and a lot of stuff needs to be done. \
 If you find that something you need is missing, consider creating a ticket and contributing :).
