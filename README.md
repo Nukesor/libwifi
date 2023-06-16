@@ -15,19 +15,19 @@ Covering the whole spectrum of possible 802.11 frames or all different implement
 
 The first goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
 
-The emphasis is on **convenient**, since this library doesn't focus on providing a ultra high-performance implementation. The focus is rather on providing an easy-to-use API. \
-This includes consistent and intuitive structs representing the structure of a given frame. \
+The emphasis is on **convenient**, since this library doesn't focus on providing an ultra-high-performance implementation. The focus is rather on providing an easy-to-use API. \
+This includes consistent and intuitive structs that represent the structure of a given frame. \
 However, this doesn't mean that this library [isn't quite fast anyway ;)](https://github.com/Nukesor/libwifi#performance).
 
-The second goal is to provide an unified API to:
+The second goal is to provide a unified API to:
 
-1. query information about your wifi interfaces (iwlist equivalent).
-2. set attributes and configure your wifi interfaces (iwconfig equivalent).
+1. query information about your wifi interfaces (`iwlist` equivalent).
+2. set attributes and configure your wifi interfaces (`iwconfig` equivalent).
 
-As a prototype it's planned to call and parse existing binaries.
-However, a native re-implementation of those tools is desired in a long-term manner. \
-For instance, the [wireless-tools](https://github.com/HewlettPackard/wireless-tools) are a great C-library with a lot of documentation and very will structured code.
-This could be used as a guide-line for re-implementation.
+As a prototype implementation, it's planned to call existing binaries and parse their output.
+However, a native re-implementation of those tools is most definitely desirable in the long term. \
+For instance, the [wireless-tools](https://github.com/HewlettPackard/wireless-tools) are a great C project with a lot of documentation and very well structured code.
+This could be used as a guideline when working on a re-implementation.
 
 The project is still under heavy development, and a lot of features are missing, but it should be a good foundation for a proper wifi library :).
 
@@ -60,15 +60,12 @@ A full example on how to capture, process and parse wifi traffic can be found in
 
 ## Performance
 
-There are a few benches in the `benches` folder.
-
-1. Install `cargo-criterion` by calling `cargo install cargo-criterion`.
-2. Run the benchmarks with `cargo criterion`.
+There are a few benchmarks in the `benches` folder, which can be run by calling `cargo bench`.
 
 Right now, parsing a `Beacon` frame, which is one of the more complex frames, takes `~1 µs` on a i7-8550U. \
 Parsing a `Data` frame takes `~84 ns`.
 
-If we take this as a rough guideline, you can roughly expect a million frames per second.
+If we take this as a rough guideline, you can roughly expect a million frames per second per core on that CPU.
 
 **Disclaimer:** This will most likely become slower, as more missing features/parsers will be added to the library.
     Anyhow, I don't expect this to drop below 100k frames/s.
