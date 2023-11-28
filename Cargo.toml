@@ -1,6 +1,7 @@
 [workspace]
 members = ["libwifi", "libwifi_macros"]
 exclude = ["examples/capture_example"]
+resolver = "2"
 
 [workspace.package]
 authors = ["Arne Beer <contact@arne.beer>"]
@@ -12,5 +13,5 @@ edition = "2021"
 rust-version = "1.62"
 
 [profile.release]
-lto = true
+lto = "thin"
 codegen-units = 1
