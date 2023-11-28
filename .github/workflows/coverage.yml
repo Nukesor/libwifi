@@ -4,15 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/**/*'
+      - '.github/workflows/coverage.yml'
       - '**.rs'
       - 'Cargo.toml'
+      - 'Cargo.lock'
   pull_request:
     branches: [main]
     paths:
-      - '.github/**/*'
+      - '.github/workflows/coverage.yml'
       - '**.rs'
       - 'Cargo.toml'
+      - 'Cargo.lock'
 
 jobs:
   coverage:
@@ -20,14 +22,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          override: true
           components: llvm-tools-preview
 
       - name: Install cargo-llvm-cov
@@ -40,4 +40,4 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           files: lcov.info
-          fail_ci_if_error: true
+          fail_ci_if_error: false

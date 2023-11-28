@@ -4,43 +4,51 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/**/*'
-      - '**.rs'
-      - 'Cargo.toml'
+      - ".github/workflows/test.yml"
+      - "**.rs"
+      - "Cargo.toml"
+      - "Cargo.lock"
   pull_request:
     branches: [main]
     paths:
-      - '.github/**/*'
-      - '**.rs'
-      - 'Cargo.toml'
+      - ".github/workflows/test.yml"
+      - "**.rs"
+      - "Cargo.toml"
+      - "Cargo.lock"
 
 jobs:
   test:
-    name: Tests on ${{ matrix.os }} for ${{ matrix.toolchain }}
+    name: Test target ${{ matrix.target }} on ${{ matrix.os }} for ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        toolchain: [stable]
+        target:
+          - x86_64-unknown-linux-gnu
+          - x86_64-pc-windows-msvc
+          - x86_64-apple-darwin
+        toolchain: [stable, nightly, "1.70"]
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@master
         with:
-          profile: minimal
+          targets: ${{ matrix.target }}
           toolchain: ${{ matrix.toolchain }}
-          override: true
           components: rustfmt, clippy
 
       - name: cargo build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
+        run: cargo build --target=${{ matrix.target }}
 
       - name: cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+        run: cargo test --target=${{ matrix.target }}
