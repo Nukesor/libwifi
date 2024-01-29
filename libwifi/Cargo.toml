@@ -23,7 +23,7 @@ harness = false
 log = "0.4"
 nom = "7"
 thiserror = "1.0"
-strum_macros = "0.25"
+strum_macros = "0.26"
 enum_dispatch = "0.3"
 libwifi_macros = { version = "0.0.2", path = "../libwifi_macros" }
 
