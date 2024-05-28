@@ -9,5 +9,5 @@ anyhow = "1"
 better-panic = "0.3"
 clap = { version = "4", features = ["derive", "cargo"] }
 libwifi = { path = "../../libwifi" }
-pcap = { version = "1", features = ['capture-stream'] }
+pcap = { version = "2", features = ['capture-stream'] }
 radiotap = "1.3"
