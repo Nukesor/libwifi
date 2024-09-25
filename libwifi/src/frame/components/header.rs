@@ -62,10 +62,8 @@ impl Addresses for ManagementHeader {
     /// Return the mac address of the sender
     fn src(&self) -> Option<&MacAddress> {
         let frame_control = &self.frame_control;
-        if frame_control.to_ds() {
+        if frame_control.from_ds() {
             Some(&self.address_3)
-        } else if frame_control.from_ds() {
-            Some(&self.address_1)
         } else {
             Some(&self.address_2)
         }
@@ -75,11 +73,7 @@ impl Addresses for ManagementHeader {
     /// A full `ff:ff:..` usually indicates a undirected broadcast.
     fn dest(&self) -> &MacAddress {
         let frame_control = &self.frame_control;
-        if frame_control.to_ds() && frame_control.from_ds() {
-            &self.address_3
-        } else if frame_control.to_ds() {
-            &self.address_2
-        } else if frame_control.from_ds() {
+        if frame_control.to_ds() {
             &self.address_3
         } else {
             &self.address_1
@@ -140,14 +134,10 @@ pub struct DataHeader {
 impl Addresses for DataHeader {
     /// Return the mac address of the sender
     fn src(&self) -> Option<&MacAddress> {
-        if self.frame_control.to_ds() && self.frame_control.from_ds() {
+        if self.frame_control.from_ds() {
             // This should be safe.
             // If both to_ds and from_ds are true, we always read the forth address.
-            self.address_4.as_ref()
-        } else if self.frame_control.to_ds() {
             Some(&self.address_3)
-        } else if self.frame_control.from_ds() {
-            Some(&self.address_1)
         } else {
             Some(&self.address_2)
         }
@@ -157,10 +147,8 @@ impl Addresses for DataHeader {
     /// A full `ff:ff:..` usually indicates a undirected broadcast.
     fn dest(&self) -> &MacAddress {
         if self.frame_control.to_ds() && self.frame_control.from_ds() {
-            &self.address_3
+            self.address_4.as_ref().unwrap_or(&self.address_1)
         } else if self.frame_control.to_ds() {
-            &self.address_2
-        } else if self.frame_control.from_ds() {
             &self.address_3
         } else {
             &self.address_1
