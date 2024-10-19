@@ -36,6 +36,7 @@ pub fn parse_frame(input: &[u8]) -> Result<Frame, Error> {
         FrameSubType::ProbeResponse => parse_probe_response(frame_control, input),
         FrameSubType::AssociationRequest => parse_association_request(frame_control, input),
         FrameSubType::AssociationResponse => parse_association_response(frame_control, input),
+        FrameSubType::Deauthentication => parse_deauthentication(frame_control, input),
 
         // Control
         FrameSubType::Rts => parse_rts(frame_control, input),

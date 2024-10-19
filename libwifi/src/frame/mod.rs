@@ -27,6 +27,7 @@ pub enum Frame {
     ProbeResponse(ProbeResponse),
     AssociationRequest(AssociationRequest),
     AssociationResponse(AssociationResponse),
+    Deauthentication(Deauthentication),
 
     // Control Frames
     Rts(Rts),
