@@ -4,7 +4,7 @@ use nom::sequence::tuple;
 use crate::error::Error;
 use crate::frame::components::FrameControl;
 use crate::frame::*;
-use crate::parsers::{parse_management_header, parse_station_info};
+use crate::parsers::{clone_slice, parse_management_header, parse_station_info};
 
 /// Parse an [AssociationRequest] frame.
 ///
@@ -108,5 +108,21 @@ pub fn parse_probe_response(frame_control: FrameControl, input: &[u8]) -> Result
         beacon_interval,
         capability_info,
         station_info,
+    }))
+}
+
+/// Parse a [Deauthentication] frame.
+///
+/// The general structure is:
+/// - ManagementHeader
+/// - Reason code
+pub fn parse_deauthentication(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
+    let (input, header) = parse_management_header(frame_control, input)?;
+    let reason_code_bytes = clone_slice::<2>(input);
+    let reason_code = u16::from_le_bytes(reason_code_bytes);
+
+    Ok(Frame::Deauthentication(Deauthentication {
+        header,
+        reason_code,
     }))
 }

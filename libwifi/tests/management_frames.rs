@@ -119,7 +119,7 @@ fn test_authentication() {
 
 #[test]
 fn test_deauthentication() {
-    let _payload = [
+    let payload = [
         192, 0, // FrameControl
         58, 1, // Duration id
         248, 50, 228, 173, 71, 184, // First Address
@@ -127,4 +127,12 @@ fn test_deauthentication() {
         248, 50, 228, 173, 71, 184, // Third Address
         224, 146, 3, 0,
     ];
+
+    let frame = parse_frame(&payload).expect("Payload should be valid");
+    println!("{frame:?}");
+    assert!(matches!(frame, Frame::Deauthentication(_)));
+
+    if let Frame::Deauthentication(deauthentication) = frame {
+        assert_eq!(3, deauthentication.reason_code);
+    }
 }
