@@ -21,10 +21,12 @@ The most prominent features being:
 - Various parsers for new control and data frames, including
   - `CTS` and `Ack` frames for the `RTS -> CTS -> Data -> ACK` flow.
   - Complete `Data` frame parsing.
-  - `DataCfAck` `DataCfPoll`, `DataCfAckCfPoll`, `CfPoll` `CfAckCfPoll`
-  - `QosDataCfAck`, `QosDataCfPoll`, `QosDataCfAckCfPoll`, `QosCfPoll`, `QosCfAckCfPoll`
+  - `DataCfAck` `DataCfPoll`, `DataCfAckCfPoll`, `CfPoll` and `CfAckCfPoll` frames
+  - `QosDataCfAck`, `QosDataCfPoll`, `QosDataCfAckCfPoll`, `QosCfPoll` and `QosCfAckCfPoll` frames
 - Deauthentication reason parsing
-- `ReassociationRequest`, `ReassociationResponse`
+- `ReassociationRequest`, `ReassociationResponse` and `Disassociation` frames
+- `Action` frames
+- `Authentication` and`Deauthentication` frames
 
 ## [0.3.1] - unreleased
 

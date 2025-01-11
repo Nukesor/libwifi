@@ -11,6 +11,8 @@ There's an architectural/contribution guide in `docs/Frame.md` and pull requests
 
 Covering the whole spectrum of possible 802.11 frames or all different implementations of wifi tools out there is an impossible task for a single person, let's try to tackle this together!
 
+Large parts of this library have been backported from @Ragnt's [AngryOxide](https://github.com/Ragnt/AngryOxide).
+
 ## What is Libwifi
 
 The first goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
@@ -68,7 +70,7 @@ Parsing a `Data` frame takes `~84 ns`.
 If we take this as a rough guideline, you can roughly expect a million frames per second per core on that CPU.
 
 **Disclaimer:** This will most likely become slower, as more missing features/parsers will be added to the library.
-    Anyhow, I don't expect this to drop below 100k frames/s.
+Anyhow, I don't expect this to drop below 100k frames/s.
 
 ## Roadmap and TODOs
 
@@ -92,17 +94,17 @@ This includes features to:
 - Management Frames
   - [x] AssociationRequest,
   - [x] AssociationResponse,
-  - [ ] ReassociationRequest,
-  - [ ] ReassociationResponse,
+  - [x] ReassociationRequest,
+  - [x] ReassociationResponse,
+  - [x] Deauthentication,
   - [x] ProbeRequest,
   - [x] ProbeResponse,
   - [ ] TimingAdvertisement,
   - [x] Beacon,
   - [ ] Atim,
-  - [ ] Disassociation,
-  - [ ] Authentication,
-  - [ ] Deauthentication,
-  - [ ] Action,
+  - [x] Disassociation,
+  - [x] Authentication,
+  - [x] Action,
   - [ ] ActionNoAck,
 - Control Frames
   - [ ] Trigger,
@@ -121,20 +123,20 @@ This includes features to:
   - [ ] CfEndCfAck,
 - Data Frames
   - [x] Data,
-  - [ ] DataCfAck,
-  - [ ] DataCfPoll,
-  - [ ] DataCfAckCfPoll,
+  - [x] DataCfAck,
+  - [x] DataCfPoll,
+  - [x] DataCfAckCfPoll,
   - [x] NullData,
-  - [ ] CfAck,
-  - [ ] CfPoll,
-  - [ ] CfAckCfPoll,
+  - [x] CfAck,
+  - [x] CfPoll,
+  - [x] CfAckCfPoll,
   - [x] QosData,
-  - [ ] QosDataCfAck,
-  - [ ] QosDataCfPoll,
-  - [ ] QosDataCfAckCfPoll,
+  - [x] QosDataCfAck,
+  - [x] QosDataCfPoll,
+  - [x] QosDataCfAckCfPoll,
   - [x] QosNull,
-  - [ ] QosCfPoll,
-  - [ ] QosCfAckCfPoll,
+  - [x] QosCfPoll,
+  - [x] QosCfAckCfPoll,
 - Frame Components
   - [x] Frame Control
   - [x] Sequence Control
@@ -143,10 +145,8 @@ This includes features to:
     - [x] SSID
     - [x] Supported rates
     - [x] Generic extraction of remaining fields
-    - [ ] All other fields
   - [x] Data Header
   - [x] QoS Data Header
-    - [ ] The QoS flags must still be properly parsed
 
 There's a lot more to the IEE 802.11 spec and a lot of stuff needs to be done. \
 If you find that something you need is missing, consider creating a ticket and contributing :).
