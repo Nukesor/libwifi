@@ -18,7 +18,7 @@ fn test_data() {
         178, 230, 66,
     ];
 
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::Data(_)));
 }
@@ -50,7 +50,7 @@ fn test_qos_data() {
         20, 115, 79, 168, 50, 132, 160, 219, 152, 184, 110, 181, 105, 4, 153, 182, 129, 58, 87, 72,
         110, 194, 217, 192, 151, 89, 181, 161, 122, 249, 129, 201, 75, 6, 32, 158, 213, 21, 168,
     ];
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::QosData(_)));
 }
@@ -66,7 +66,7 @@ fn test_qos_null() {
         0, 0, // QoS Header
     ];
 
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::QosNull(_)));
 }

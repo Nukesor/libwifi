@@ -20,7 +20,7 @@ pub fn parse_data(crit: &mut Criterion) {
     // Add some random variable to prevent aggressive compiler optimizations;
     let mut rng = thread_rng();
     let random: u8 = rng.gen();
-    let mut payload = DATA_PAYLOAD.clone();
+    let mut payload = DATA_PAYLOAD;
 
     // Log raw byte throughput
     let mut group = crit.benchmark_group("parsers");
@@ -30,7 +30,7 @@ pub fn parse_data(crit: &mut Criterion) {
     group.bench_function("Parse data", |bencher| {
         bencher.iter(|| {
             payload[111] = random;
-            assert!(parse_frame(&payload).is_ok());
+            assert!(parse_frame(&payload, false).is_ok());
         })
     });
     group.finish()

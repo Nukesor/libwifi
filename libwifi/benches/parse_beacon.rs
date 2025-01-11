@@ -39,7 +39,7 @@ const BEACON_PAYLOAD: [u8; 272] = [
 pub fn parse_beacon(crit: &mut Criterion) {
     let mut rng = thread_rng();
     let random: u8 = rng.gen();
-    let mut payload = BEACON_PAYLOAD.clone();
+    let mut payload = BEACON_PAYLOAD;
 
     // Log raw byte throughput
     let mut group = crit.benchmark_group("parsers");
@@ -49,7 +49,7 @@ pub fn parse_beacon(crit: &mut Criterion) {
     group.bench_function("Parse beacon", |bencher| {
         bencher.iter(|| {
             payload[270] = random;
-            assert!(parse_frame(&BEACON_PAYLOAD).is_ok())
+            assert!(parse_frame(&BEACON_PAYLOAD, false).is_ok())
         })
     });
     group.finish()

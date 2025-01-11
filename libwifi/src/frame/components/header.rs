@@ -36,6 +36,28 @@ pub struct ManagementHeader {
     pub sequence_control: SequenceControl,
 }
 
+impl ManagementHeader {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+
+        // Serialize frame control
+        bytes.extend_from_slice(&self.frame_control.encode());
+
+        // Serialize duration (2 bytes, big-endian)
+        bytes.extend_from_slice(&self.duration);
+
+        // Serialize MAC addresses
+        bytes.extend_from_slice(&self.address_1.encode());
+        bytes.extend_from_slice(&self.address_2.encode());
+        bytes.extend_from_slice(&self.address_3.encode());
+
+        // Serialize sequence control
+        bytes.extend_from_slice(&self.sequence_control.encode());
+
+        bytes
+    }
+}
+
 /// Which address is used in which way, depends on a combination of
 /// - two flags in the FrameControl header.
 /// - the Type/Subtype constellation.
@@ -104,7 +126,7 @@ impl Addresses for ManagementHeader {
 /// Representation of a data frame header. This format is used by all data frames!
 ///
 /// It's very similar to the format of the management header, but there are some slight
-/// differences, since they allow a forth address and Quality of Service (QoS) data.
+/// differences, since they allow a fourth address and Quality of Service (QoS) data.
 ///
 /// Structure:
 ///
@@ -135,6 +157,38 @@ pub struct DataHeader {
     pub sequence_control: SequenceControl,
     pub address_4: Option<MacAddress>,
     pub qos: Option<[u8; 2]>,
+}
+
+impl DataHeader {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut bytes = Vec::new();
+
+        // Serialize frame control
+        bytes.extend_from_slice(&self.frame_control.encode());
+
+        // Serialize duration (2 bytes)
+        bytes.extend_from_slice(&self.duration);
+
+        // Serialize MAC addresses
+        bytes.extend_from_slice(&self.address_1.encode());
+        bytes.extend_from_slice(&self.address_2.encode());
+        bytes.extend_from_slice(&self.address_3.encode());
+
+        // Serialize sequence control
+        bytes.extend_from_slice(&self.sequence_control.encode());
+
+        // Serialize address 4 if present
+        if let Some(addr) = &self.address_4 {
+            bytes.extend_from_slice(&addr.encode());
+        }
+
+        // Serialize QoS if present
+        if let Some(qos) = &self.qos {
+            bytes.extend_from_slice(qos);
+        }
+
+        bytes
+    }
 }
 
 impl Addresses for DataHeader {

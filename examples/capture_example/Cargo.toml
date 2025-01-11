@@ -1,13 +1,13 @@
 [package]
-name = "capture_example"
-version = "0.1.0"
 authors = ["Arne Beer <contact@arne.beer>"]
 edition = "2021"
+name = "capture_example"
+version = "0.1.0"
 
 [dependencies]
 anyhow = "1"
 better-panic = "0.3"
-clap = { version = "4", features = ["derive", "cargo"] }
+clap = { version = "4", features = ["cargo", "derive"] }
 libwifi = { path = "../../libwifi" }
 pcap = { version = "2", features = ['capture-stream'] }
 radiotap = "1.3"

@@ -10,7 +10,7 @@ fn test_rts() {
         20, 125, 218, 170, 84, 81, // Second Address
     ];
 
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::Rts(_)));
 }
@@ -23,7 +23,7 @@ fn test_cts() {
         224, 62, 68, 8, 195, 239, // First Address
     ];
 
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::Cts(_)));
 }
@@ -36,7 +36,7 @@ fn test_ack() {
         104, 217, 60, 214, 195, 239, // First Address
     ];
 
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::Ack(_)));
 }
@@ -52,7 +52,7 @@ fn test_single_tid_compressed_block_ack_request() {
         160, 15, // Starting sequence number of the single TID
     ];
 
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::BlockAckRequest(_)));
 
@@ -73,7 +73,7 @@ fn test_compressed_bitmap_block_ack() {
         1, 0, 0, 0, 0, 0, 0, 0, // BlockAck Bitmap
     ];
 
-    let frame = parse_frame(&payload).expect("Payload should be valid");
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
     println!("{frame:?}");
     assert!(matches!(frame, Frame::BlockAck(_)));
 
