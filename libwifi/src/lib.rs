@@ -1,6 +1,6 @@
-/// Libwifi's own [Error](error::Error) implementation
+/// Libwifi's own [Error] implementation
 pub mod error;
-/// The [Frame](frame::Frame) enum and all frame structs.
+/// The [Frame] enum and all frame structs.
 pub mod frame;
 /// Enums representing frame types and frame subtypes.
 mod frame_types;
