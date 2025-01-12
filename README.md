@@ -15,23 +15,13 @@ Large parts of this library have been backported from @Ragnt's [AngryOxide](http
 
 ## What is Libwifi
 
-The first goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
+The goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
 
 The emphasis is on **convenient**, since this library doesn't focus on providing an ultra-high-performance implementation. The focus is rather on providing an easy-to-use API. \
 This includes consistent and intuitive structs that represent the structure of a given frame. \
 However, this doesn't mean that this library [isn't quite fast anyway ;)](https://github.com/Nukesor/libwifi#performance).
 
-The second goal is to provide a unified API to:
-
-1. query information about your wifi interfaces (`iwlist` equivalent).
-2. set attributes and configure your wifi interfaces (`iwconfig` equivalent).
-
-As a prototype implementation, it's planned to call existing binaries and parse their output.
-However, a native re-implementation of those tools is most definitely desirable in the long term. \
-For instance, the [wireless-tools](https://github.com/HewlettPackard/wireless-tools) are a great C project with a lot of documentation and very well structured code.
-This could be used as a guideline when working on a re-implementation.
-
-The project is still under heavy development, and a lot of features are missing, but it should be a good foundation for a proper wifi library :).
+The project is still under heavy development, and a lot of features are missing, but it should be a good foundation for a proper IEE 802.11 library :).
 
 ## How to use it
 
