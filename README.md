@@ -11,17 +11,23 @@ There's an architectural/contribution guide in `docs/Frame.md` and pull requests
 
 Covering the whole spectrum of possible 802.11 frames or all different implementations of wifi tools out there is an impossible task for a single person, let's try to tackle this together!
 
-Large parts of this library have been backported from @Ragnt's [AngryOxide](https://github.com/Ragnt/AngryOxide).
+Large parts of this library have been upstreamed from @Ragnt's [AngryOxide](https://github.com/Ragnt/AngryOxide).
 
 ## What is Libwifi
 
 The goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
 
-The emphasis is on **convenient**, since this library doesn't focus on providing an ultra-high-performance implementation. The focus is rather on providing an easy-to-use API. \
+The emphasis is on **convenient**, since the focus is to providing an easy-to-use API, instead of squeezing the last bit of performance out of it. \
 This includes consistent and intuitive structs that represent the structure of a given frame. \
-However, this doesn't mean that this library [isn't quite fast anyway ;)](https://github.com/Nukesor/libwifi#performance).
+However, this library [is still very fast](https://github.com/Nukesor/libwifi#performance).
 
-The project is still under heavy development, and a lot of features are missing, but it should be a good foundation for a proper IEE 802.11 library :).
+The project is still under heavy development, and a quite a few features are missing, but it should be a good foundation for a proper IEE 802.11 library :).
+
+## Contributing
+
+I'm no longer actively using this library myself, so it relies on external contributions.
+
+Writing documentation and tests are a huge way to start contributing to it and are very appreciated!
 
 ## How to use it
 
@@ -54,13 +60,10 @@ A full example on how to capture, process and parse wifi traffic can be found in
 
 There are a few benchmarks in the `benches` folder, which can be run by calling `cargo bench`.
 
-Right now, parsing a `Beacon` frame, which is one of the more complex frames, takes `~1 µs` on a i7-8550U. \
-Parsing a `Data` frame takes `~84 ns`.
+Right now, parsing a `Beacon` frame, which is one of the more complex frames, takes `~300ns` on a `AMD Ryzen 7 7840HS`. \
+Parsing a `Data` frame takes `~28 ns`.
 
-If we take this as a rough guideline, you can roughly expect a million frames per second per core on that CPU.
-
-**Disclaimer:** This will most likely become slower, as more missing features/parsers will be added to the library.
-Anyhow, I don't expect this to drop below 100k frames/s.
+If we take this as a rough guideline, you can roughly expect 3-35 million frames per second per core on that CPU, depending on frame type.
 
 ## Roadmap and TODOs
 
