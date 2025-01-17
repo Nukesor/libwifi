@@ -16,7 +16,7 @@ pub fn handle_packet(packet: Packet) -> Result<()> {
     };
 
     let payload = &packet.data[radiotap.header.length..];
-    match libwifi::parse_frame(payload) {
+    match libwifi::parse_frame(payload, false) {
         Ok(frame) => {
             println!("Got frame: {frame:?}");
         }
