@@ -6,7 +6,18 @@ pub enum FrameType {
     Management,
     Control,
     Data,
-    Unknown,
+    Unknown(u8),
+}
+
+impl FrameType {
+    pub fn to_bytes(&self) -> u8 {
+        match self {
+            FrameType::Management => 0,
+            FrameType::Control => 1,
+            FrameType::Data => 2,
+            FrameType::Unknown(x) => *x,
+        }
+    }
 }
 
 pub enum ManagementSubTypes {
@@ -80,8 +91,8 @@ pub enum FrameSubType {
     QosCfAckCfPoll,
 
     // Special subtypes
-    Unhandled,
-    Reserved,
+    Unhandled(u8),
+    Reserved(u8),
 }
 
 impl FrameSubType {
@@ -143,7 +154,8 @@ impl FrameSubType {
             FrameSubType::QosNull => 12,
             FrameSubType::QosCfPoll => 14,
             FrameSubType::QosCfAckCfPoll => 15,
-            _ => 255,
+            FrameSubType::Unhandled(x) => *x,
+            FrameSubType::Reserved(x) => *x,
         }
     }
 }

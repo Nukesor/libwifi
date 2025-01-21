@@ -75,7 +75,7 @@ impl FrameControl {
 
     pub fn encode(&self) -> [u8; 2] {
         let protocol_version_bits = self.protocol_version & 0b11; // 2 bits
-        let frame_type_bits = (self.frame_type as u8 & 0b11) << 2; // 2 bits
+        let frame_type_bits = (self.frame_type.to_bytes() & 0b11) << 2; // 2 bits
         let frame_subtype_bits = (self.frame_subtype.to_bytes() & 0b1111) << 4; // 4 bits
 
         let first_byte = frame_subtype_bits | frame_type_bits | protocol_version_bits;
