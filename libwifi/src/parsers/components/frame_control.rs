@@ -26,7 +26,7 @@ pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
         FrameType::Management => management_frame_subtype(frame_subtype),
         FrameType::Control => control_frame_subtype(frame_subtype),
         FrameType::Data => data_frame_subtype(frame_subtype),
-        FrameType::Unknown => FrameSubType::Unhandled,
+        FrameType::Unknown(_) => FrameSubType::Unhandled(frame_subtype),
     };
 
     Ok((
@@ -46,7 +46,7 @@ fn parse_frame_type(byte: u8) -> FrameType {
         0 => FrameType::Management,
         1 => FrameType::Control,
         2 => FrameType::Data,
-        _ => FrameType::Unknown,
+        byte => FrameType::Unknown(byte),
     }
 }
 
@@ -61,7 +61,7 @@ fn management_frame_subtype(byte: u8) -> FrameSubType {
         4 => FrameSubType::ProbeRequest,
         5 => FrameSubType::ProbeResponse,
         6 => FrameSubType::TimingAdvertisement,
-        7 => FrameSubType::Reserved,
+        7 => FrameSubType::Reserved(byte),
         8 => FrameSubType::Beacon,
         9 => FrameSubType::Atim,
         10 => FrameSubType::Disassociation,
@@ -69,8 +69,8 @@ fn management_frame_subtype(byte: u8) -> FrameSubType {
         12 => FrameSubType::Deauthentication,
         13 => FrameSubType::Action,
         14 => FrameSubType::ActionNoAck,
-        15 => FrameSubType::Reserved,
-        _ => FrameSubType::Unhandled,
+        15 => FrameSubType::Reserved(byte),
+        x => FrameSubType::Unhandled(x),
     }
 }
 
@@ -78,8 +78,8 @@ fn management_frame_subtype(byte: u8) -> FrameSubType {
 /// the assumption that this is a control frame.
 fn control_frame_subtype(byte: u8) -> FrameSubType {
     match byte {
-        0 => FrameSubType::Reserved,
-        1 => FrameSubType::Reserved,
+        0 => FrameSubType::Reserved(byte),
+        1 => FrameSubType::Reserved(byte),
         2 => FrameSubType::Trigger,
         3 => FrameSubType::Tack,
         4 => FrameSubType::BeamformingReportPoll,
@@ -94,7 +94,7 @@ fn control_frame_subtype(byte: u8) -> FrameSubType {
         13 => FrameSubType::Ack,
         14 => FrameSubType::CfEnd,
         15 => FrameSubType::CfEndCfAck,
-        _ => FrameSubType::Unhandled,
+        x => FrameSubType::Unhandled(x),
     }
 }
 
@@ -115,9 +115,9 @@ fn data_frame_subtype(byte: u8) -> FrameSubType {
         10 => FrameSubType::QosDataCfPoll,
         11 => FrameSubType::QosDataCfAckCfPoll,
         12 => FrameSubType::QosNull,
-        13 => FrameSubType::Reserved,
+        13 => FrameSubType::Reserved(byte),
         14 => FrameSubType::QosCfPoll,
         15 => FrameSubType::QosCfAckCfPoll,
-        _ => FrameSubType::Unhandled,
+        x => FrameSubType::Unhandled(x),
     }
 }
