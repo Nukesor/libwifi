@@ -6,6 +6,7 @@ pub enum FrameType {
     Management,
     Control,
     Data,
+    Extension,
     Unknown(u8),
 }
 
@@ -15,6 +16,7 @@ impl FrameType {
             FrameType::Management => 0,
             FrameType::Control => 1,
             FrameType::Data => 2,
+            FrameType::Extension => 3,
             FrameType::Unknown(x) => *x,
         }
     }
@@ -90,6 +92,10 @@ pub enum FrameSubType {
     QosCfPoll,
     QosCfAckCfPoll,
 
+    // Extension subtypes
+    DMGBeacon,
+    S1GBeacon,
+
     // Special subtypes
     Unhandled(u8),
     Reserved(u8),
@@ -154,6 +160,8 @@ impl FrameSubType {
             FrameSubType::QosNull => 12,
             FrameSubType::QosCfPoll => 14,
             FrameSubType::QosCfAckCfPoll => 15,
+            FrameSubType::DMGBeacon => 0,
+            FrameSubType::S1GBeacon => 1,
             FrameSubType::Unhandled(x) => *x,
             FrameSubType::Reserved(x) => *x,
         }

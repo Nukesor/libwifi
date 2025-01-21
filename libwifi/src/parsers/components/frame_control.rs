@@ -26,6 +26,7 @@ pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
         FrameType::Management => management_frame_subtype(frame_subtype),
         FrameType::Control => control_frame_subtype(frame_subtype),
         FrameType::Data => data_frame_subtype(frame_subtype),
+        FrameType::Extension => extension_frame_subtype(frame_subtype),
         FrameType::Unknown(_) => FrameSubType::Unhandled(frame_subtype),
     };
 
@@ -46,6 +47,7 @@ fn parse_frame_type(byte: u8) -> FrameType {
         0 => FrameType::Management,
         1 => FrameType::Control,
         2 => FrameType::Data,
+        3 => FrameType::Extension,
         byte => FrameType::Unknown(byte),
     }
 }
@@ -95,6 +97,16 @@ fn control_frame_subtype(byte: u8) -> FrameSubType {
         14 => FrameSubType::CfEnd,
         15 => FrameSubType::CfEndCfAck,
         x => FrameSubType::Unhandled(x),
+    }
+}
+
+/// Get the FrameSubType from a 4-bit integer (bit 4-7) under
+/// the assumption that this is an extension frame.
+fn extension_frame_subtype(byte: u8) -> FrameSubType {
+    match byte {
+        0 => FrameSubType::DMGBeacon,
+        1 => FrameSubType::S1GBeacon,
+        _ => FrameSubType::Reserved(byte),
     }
 }
 
