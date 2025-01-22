@@ -1,5 +1,20 @@
 use strum_macros::Display;
 
+/// Enum with protocol version
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
+pub enum FrameProtocolVersion {
+    PV0,
+    Unknown(u8),
+}
+impl FrameProtocolVersion {
+    pub fn to_bytes(&self) -> u8 {
+        match self {
+            FrameProtocolVersion::PV0 => 0,
+            FrameProtocolVersion::Unknown(x) => *x,
+        }
+    }
+}
+
 /// Enum with all frame types.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
 pub enum FrameType {
