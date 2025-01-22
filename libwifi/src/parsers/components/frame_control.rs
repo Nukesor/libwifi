@@ -18,6 +18,8 @@ pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
             take(8usize),
         ))(input)?;
 
+    let protocol_version = parse_protocol_version(protocol_version);
+
     let frame_type = parse_frame_type(frame_type);
 
     // The next 4 bits are then used to determine the frame sub-type.
@@ -39,6 +41,13 @@ pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
             flags,
         },
     ))
+}
+
+fn parse_protocol_version(byte: u8) -> FrameProtocolVersion {
+    match byte {
+        0 => FrameProtocolVersion::PV0,
+        n => FrameProtocolVersion::Unknown(n),
+    }
 }
 
 /// Get the FrameType a two-bit integer (bits 3-4 of the payload).
