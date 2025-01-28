@@ -39,6 +39,13 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                 1 => station_info.supported_rates = parse_supported_rates(data),
                 3 => station_info.ds_parameter_set = Some(data[0]),
                 5 => station_info.tim = Some(data.to_vec()),
+                6 => {
+                    station_info.ibss_parameter_set = if data.len() >= 2 {
+                        Some(u16::from_le_bytes([data[0], data[1]]))
+                    } else {
+                        None
+                    }
+                }
                 7 => station_info.country_info = Some(data.to_vec()),
                 32 => station_info.power_constraint = Some(data[0]),
                 37 => station_info.channel_switch = parse_channel_switch(data),

@@ -20,6 +20,7 @@ pub struct StationInfo {
     pub ssid: Option<String>,
     pub ssid_length: Option<usize>,
     pub ds_parameter_set: Option<u8>,
+    pub ibss_parameter_set: Option<u16>,
     pub tim: Option<Vec<u8>>,
     pub country_info: Option<Vec<u8>>,
     pub power_constraint: Option<u8>,
@@ -94,6 +95,13 @@ impl StationInfo {
             bytes.push(5); // TIM tag number
             bytes.push(tim.len() as u8); // Length of TIM
             bytes.extend(tim);
+        }
+
+        // Encode IBSS element set - Tag Number: 6
+        if let Some(ibss_parameter_set) = self.ibss_parameter_set {
+            bytes.push(6);
+            bytes.push(2);
+            bytes.extend(u16::to_le_bytes(ibss_parameter_set));
         }
 
         // Encode Country Info (if present) - Tag Number: 7
