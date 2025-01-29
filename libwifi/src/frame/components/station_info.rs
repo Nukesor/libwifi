@@ -26,6 +26,7 @@ pub struct StationInfo {
     pub power_constraint: Option<u8>,
     pub ht_capabilities: Option<Vec<u8>>,
     pub ht_information: Option<HTInformation>,
+    pub multiple_bssid: Option<MultipleBSSID>,
     pub vht_capabilities: Option<Vec<u8>>,
     pub rsn_information: Option<RsnInformation>,
     pub wpa_info: Option<WpaInformation>,
@@ -131,6 +132,14 @@ impl StationInfo {
             bytes.push(61); // HT Capabilities tag number
             bytes.push(ht_info_data.len() as u8); // Length of HT Capabilities
             bytes.extend(ht_info_data);
+        }
+
+        // Encode Multiple BSSID (if present) - Tag Number: 71
+        if let Some(multiple_bssid) = &self.multiple_bssid {
+            let multiple_bssid_data = multiple_bssid.encode();
+            bytes.push(71);
+            bytes.push(multiple_bssid_data.len() as u8);
+            bytes.extend(multiple_bssid_data);
         }
 
         // Encode VHT Capabilities (if present) - Tag Number: 191
@@ -804,6 +813,21 @@ impl HTInformation {
         let mut data: Vec<u8> = Vec::new();
         data.push(self.primary_channel);
         data.extend(self.other_data.clone());
+        data
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct MultipleBSSID {
+    pub max_bssid_indicator: u8,
+    pub other_data: Vec<u8>,
+}
+
+impl MultipleBSSID {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut data: Vec<u8> = Vec::new();
+        data.push(self.max_bssid_indicator);
+        data.extend(&self.other_data);
         data
     }
 }

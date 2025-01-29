@@ -11,7 +11,7 @@ pub use sequence_control::SequenceControl;
 pub use station_info::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
     Displays, DockingDevices, GamingDevices, HTInformation, InputDevices, MultimediaDevices,
-    NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite, RsnInformation, StationInfo,
-    Storage, SupportedRate, Telephone, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite,
-    WpaInformation, WpsInformation, WpsSetupState,
+    MultipleBSSID, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite,
+    RsnInformation, StationInfo, Storage, SupportedRate, Telephone, VendorSpecificInfo,
+    WpaAkmSuite, WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
 };

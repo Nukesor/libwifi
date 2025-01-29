@@ -4,9 +4,9 @@ use nom::{IResult, Parser, bytes::complete::take, number::complete::u8 as get_u8
 use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
     Displays, DockingDevices, GamingDevices, HTInformation, InputDevices, MultimediaDevices,
-    NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite, RsnInformation, StationInfo,
-    Storage, SupportedRate, Telephone, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite,
-    WpaInformation, WpsInformation, WpsSetupState,
+    MultipleBSSID, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite,
+    RsnInformation, StationInfo, Storage, SupportedRate, Telephone, VendorSpecificInfo,
+    WpaAkmSuite, WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
 };
 
 /// Parse variable length and variable field information.
@@ -59,6 +59,11 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                 61 => {
                     if let Ok(ht_info) = parse_ht_information(data) {
                         station_info.ht_information = Some(ht_info)
+                    }
+                }
+                71 => {
+                    if let Ok(multiple_bssid) = parse_multiple_bssid(data) {
+                        station_info.multiple_bssid = Some(multiple_bssid)
                     }
                 }
                 191 => station_info.vht_capabilities = Some(data.to_vec()),
@@ -161,6 +166,17 @@ fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
 
     Ok(HTInformation {
         primary_channel: data[0],
+        other_data: data[1..].to_vec(),
+    })
+}
+
+fn parse_multiple_bssid(data: &[u8]) -> Result<MultipleBSSID, &'static str> {
+    // shortest possible length is maxBSSIDIndicator u8
+    if data.is_empty() {
+        return Err("Multiple BSSID data too short");
+    }
+    Ok(MultipleBSSID {
+        max_bssid_indicator: data[0],
         other_data: data[1..].to_vec(),
     })
 }
