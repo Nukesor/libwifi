@@ -17,17 +17,16 @@ Large parts of this library have been upstreamed from @Ragnt's [AngryOxide](http
 
 The goal of `libwifi` is to provide a **convenient** way of parsing raw IEEE 802.11 frames!
 
-The emphasis is on **convenient**, since the focus is to providing an easy-to-use API, instead of squeezing the last bit of performance out of it. \
-This includes consistent and intuitive structs that represent the structure of a given frame. \
-However, this library [is still very fast](https://github.com/Nukesor/libwifi#performance).
+The emphasis is on **convenient**, as the focus is to provide an easy-to-use API that includes consistent and intuitive structs representing the structure of a given frame. \
+Also this library [is very fast](#performance), despite the focus on convenience.
 
-The project is still under heavy development, and a quite a few features are missing, but it should be a good foundation for a proper IEE 802.11 library :).
+The project is still under heavy development, quite a few features and some documentation are missing, but it should be a good foundation for a proper IEE 802.11 library :).
 
 ## Contributing
 
 I'm no longer actively using this library myself, so it relies on external contributions.
 
-Writing documentation and tests are a huge way to start contributing to it and are very appreciated!
+Writing documentation and tests are an easy way to start contributing and a huge help!
 
 ## How to use it
 
@@ -70,17 +69,8 @@ If we take this as a rough guideline, you can roughly expect 3-35 million frames
 ### Parser and Frames
 
 - [ ] Implement basic parsers for all frame subtypes.
-- [ ] Add specialized parsers for fields that are currently generically handled by the `StationInfo` struct.
-- [ ] Handle all edge-cases (there are a lot and I'll need help!)
-
-### Interface handling
-
-I would love to add proper interface handling to the library.
-This includes features to:
-
-- [ ] Switch modes
-- [ ] Switch channels
-- [ ] Discover available channels
+- [x] Add specialized parsers for fields that are currently generically handled by the `StationInfo` struct.
+- [ ] Handle all edge-cases (there are a lot)
 
 ### Implementation status
 
