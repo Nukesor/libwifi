@@ -1,7 +1,6 @@
 use nom::bytes::complete::take;
 use nom::number::complete::{le_u16, le_u64, le_u8};
-
-use nom::sequence::tuple;
+use nom::Parser;
 
 use crate::error::Error;
 use crate::frame::components::FrameControl;
@@ -21,7 +20,7 @@ pub fn parse_association_request(
 ) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
     let (_, (beacon_interval, capability_info, station_info)) =
-        tuple((le_u16, le_u16, parse_station_info))(input)?;
+        (le_u16, le_u16, parse_station_info).parse(input)?;
 
     Ok(Frame::AssociationRequest(AssociationRequest {
         header,
@@ -113,7 +112,7 @@ pub fn parse_association_response(
 ) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
     let (_, (capability_info, status_code, association_id, station_info)) =
-        tuple((le_u16, le_u16, le_u16, parse_station_info))(input)?;
+        (le_u16, le_u16, le_u16, parse_station_info).parse(input)?;
 
     Ok(Frame::AssociationResponse(AssociationResponse {
         header,
@@ -137,7 +136,7 @@ pub fn parse_reassociation_request(
     input: &[u8],
 ) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
-    let (input, (capability_info, listen_interval)) = tuple((le_u16, le_u16))(input)?;
+    let (input, (capability_info, listen_interval)) = (le_u16, le_u16).parse(input)?;
 
     let (input, current_ap_address) = parse_mac(input)?;
     let (_, station_info) = parse_station_info(input)?;
@@ -164,7 +163,7 @@ pub fn parse_reassociation_response(
 ) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
     let (_, (capability_info, status_code, association_id)) =
-        tuple((le_u16, le_u16, le_u16))(input)?;
+        (le_u16, le_u16, le_u16).parse(input)?;
     let (_input, station_info) = parse_station_info(input)?;
 
     Ok(Frame::ReassociationResponse(ReassociationResponse {
@@ -187,7 +186,7 @@ pub fn parse_beacon(frame_control: FrameControl, input: &[u8]) -> Result<Frame, 
     let (input, header) = parse_management_header(frame_control, input)?;
 
     let (_, (timestamp, beacon_interval, capability_info, station_info)) =
-        tuple((le_u64, le_u16, le_u16, parse_station_info))(input)?;
+        (le_u64, le_u16, le_u16, parse_station_info).parse(input)?;
 
     Ok(Frame::Beacon(Beacon {
         header,
@@ -223,7 +222,7 @@ pub fn parse_probe_request(frame_control: FrameControl, input: &[u8]) -> Result<
 pub fn parse_probe_response(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (input, header) = parse_management_header(frame_control, input)?;
     let (_, (timestamp, beacon_interval, capability_info, station_info)) =
-        tuple((le_u64, le_u16, le_u16, parse_station_info))(input)?;
+        (le_u64, le_u16, le_u16, parse_station_info).parse(input)?;
 
     Ok(Frame::ProbeResponse(ProbeResponse {
         header,

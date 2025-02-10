@@ -1,6 +1,8 @@
-use nom::sequence::tuple;
-use nom::{bits, IResult};
-use nom::{complete::take, error::Error};
+use nom::{
+    bits::{bits, complete::take},
+    error::Error,
+    IResult,
+};
 
 use crate::frame::components::FrameControl;
 use crate::frame_types::*;
@@ -9,12 +11,12 @@ use crate::frame_types::*;
 /// The format is the same for ALL frames, which makes this part quite unique.
 pub fn parse_frame_control(input: &[u8]) -> IResult<&[u8], FrameControl> {
     let (remaining, (frame_subtype, frame_type, protocol_version, flags)) =
-        bits::<_, (u8, u8, u8, u8), Error<(&[u8], usize)>, _, _>(tuple((
+        bits::<_, (u8, u8, u8, u8), Error<(&[u8], usize)>, _, _>((
             take(4usize),
             take(2usize),
             take(2usize),
             take(8usize),
-        )))(input)?;
+        ))(input)?;
 
     let frame_type = parse_frame_type(frame_type);
 

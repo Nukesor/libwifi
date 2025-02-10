@@ -1,9 +1,10 @@
-use nom::bits;
-use nom::bytes::complete::take;
-use nom::complete::take as bit_take;
-use nom::error::Error as NomError;
-use nom::number::complete::le_u64;
-use nom::sequence::tuple;
+use nom::{
+    bits::{bits, complete::take as bit_take},
+    bytes::complete::take,
+    error::Error as NomError,
+    number::complete::le_u64,
+    Parser,
+};
 
 use crate::frame::components::{FrameControl, SequenceControl};
 use crate::frame::*;
@@ -18,7 +19,7 @@ use crate::{error::Error, parsers::parse_sequence_control};
 /// - Source
 /// - Destination
 pub fn parse_rts(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
-    let (_, (duration, destination, source)) = tuple((take(2usize), parse_mac, parse_mac))(input)?;
+    let (_, (duration, destination, source)) = (take(2usize), parse_mac, parse_mac).parse(input)?;
 
     Ok(Frame::Rts(Rts {
         frame_control,
@@ -35,7 +36,7 @@ pub fn parse_rts(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Err
 /// - Duration
 /// - Destination
 pub fn parse_cts(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
-    let (_, (duration, destination)) = tuple((take(2usize), parse_mac))(input)?;
+    let (_, (duration, destination)) = (take(2usize), parse_mac).parse(input)?;
 
     Ok(Frame::Cts(Cts {
         frame_control,
@@ -51,7 +52,7 @@ pub fn parse_cts(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Err
 /// - Duration
 /// - Destination
 pub fn parse_ack(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
-    let (_, (duration, destination)) = tuple((take(2usize), parse_mac))(input)?;
+    let (_, (duration, destination)) = (take(2usize), parse_mac).parse(input)?;
 
     Ok(Frame::Ack(Ack {
         frame_control,
@@ -66,17 +67,17 @@ pub fn parse_ack(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Err
 /// This is a rather complicated one, but the docs should make things more clear.
 pub fn parse_block_ack_request(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (mut request_information, (duration, destination, source, bar_control)) =
-        tuple((take(2usize), parse_mac, parse_mac, take(2usize)))(input)?;
+        (take(2usize), parse_mac, parse_mac, take(2usize)).parse(input)?;
 
     let (_, (policy, multi_tid, compressed_bitmap, _, tid_info)) =
-        bits::<_, (bool, bool, bool, u16, u8), NomError<(&[u8], usize)>, _, _>(tuple((
+        bits::<_, (bool, bool, bool, u16, u8), NomError<(&[u8], usize)>, _, _>((
             flag,
             flag,
             flag,
             // These are the reserved
             bit_take(9usize),
             bit_take(4usize),
-        )))(bar_control)?;
+        ))(bar_control)?;
 
     // The TID_INFO and the BAR information field work in conjunction to provide information on
     // the number of TIDs in let number = ((vector[0] as u16) << 8) | vector[1] as u16;the request and starting sequence control and per TID info in the
@@ -124,13 +125,13 @@ pub fn parse_block_ack_request(frame_control: FrameControl, input: &[u8]) -> Res
                 //      `tid_info` is split into 12 bits reserved space and 4 bits TID value
                 // - 2 bytes squence control
                 (request_information, (inner_tid_info, sequence_control)) =
-                    tuple((take(2usize), parse_sequence_control))(request_information)?;
+                    (take(2usize), parse_sequence_control).parse(request_information)?;
 
                 // Extract the 4 bits TID
-                let (_, (_, tid)) = bits::<_, (u16, u8), NomError<(&[u8], usize)>, _, _>(tuple((
+                let (_, (_, tid)) = bits::<_, (u16, u8), NomError<(&[u8], usize)>, _, _>((
                     bit_take(12usize),
                     bit_take(4usize),
-                )))(inner_tid_info)?;
+                ))(inner_tid_info)?;
 
                 requested_tids.push((tid, sequence_control));
             }
@@ -160,17 +161,17 @@ pub fn parse_block_ack_request(frame_control: FrameControl, input: &[u8]) -> Res
 /// This is a rather complicated one, but the docs should make things more clear.
 pub fn parse_block_ack(frame_control: FrameControl, input: &[u8]) -> Result<Frame, Error> {
     let (mut ack_information, (duration, destination, source, bar_control)) =
-        tuple((take(2usize), parse_mac, parse_mac, take(2usize)))(input)?;
+        (take(2usize), parse_mac, parse_mac, take(2usize)).parse(input)?;
 
     let (_, (policy, multi_tid, compressed_bitmap, _, tid_info)) =
-        bits::<_, (bool, bool, bool, u16, u8), NomError<(&[u8], usize)>, _, _>(tuple((
+        bits::<_, (bool, bool, bool, u16, u8), NomError<(&[u8], usize)>, _, _>((
             flag,
             flag,
             flag,
             // These are the reserved
             bit_take(9usize),
             bit_take(4usize),
-        )))(bar_control)?;
+        ))(bar_control)?;
 
     // The TID_INFO and the BAR information field work in conjunction to provide information on
     // the number of TIDs in let number = ((vector[0] as u16) << 8) | vector[1] as u16;the request and starting sequence control and per TID info in the
@@ -222,13 +223,13 @@ pub fn parse_block_ack(frame_control: FrameControl, input: &[u8]) -> Result<Fram
                 // - 2 bytes squence control
                 // - 8 bytes BlockAck bitmap
                 (ack_information, (inner_tid_info, sequence_control, bitmap)) =
-                    tuple((take(2usize), parse_sequence_control, le_u64))(ack_information)?;
+                    (take(2usize), parse_sequence_control, le_u64).parse(ack_information)?;
 
                 // Extract the 4 bits TID
-                let (_, (_, tid)) = bits::<_, (u16, u8), NomError<(&[u8], usize)>, _, _>(tuple((
+                let (_, (_, tid)) = bits::<_, (u16, u8), NomError<(&[u8], usize)>, _, _>((
                     bit_take(12usize),
                     bit_take(4usize),
-                )))(inner_tid_info)?;
+                ))(inner_tid_info)?;
 
                 acks.push((tid, sequence_control, bitmap));
             }
@@ -240,7 +241,7 @@ pub fn parse_block_ack(frame_control: FrameControl, input: &[u8]) -> Result<Fram
             let mut acks: Vec<(u8, SequenceControl, u64)> = Vec::new();
 
             let (_, (sequence_control, bitmap)) =
-                tuple((parse_sequence_control, le_u64))(ack_information)?;
+                (parse_sequence_control, le_u64).parse(ack_information)?;
             acks.push((tid_info, sequence_control, bitmap));
             BlockAckInfo::Compressed(acks)
         }
@@ -248,7 +249,7 @@ pub fn parse_block_ack(frame_control: FrameControl, input: &[u8]) -> Result<Fram
             // In non multi-tid mode, the bar_information only contains the sequence_control of the requested TID.
             //
             let (_, (sequence_control, bitmap)) =
-                tuple((parse_sequence_control, take(128usize)))(ack_information)?;
+                (parse_sequence_control, take(128usize)).parse(ack_information)?;
 
             BlockAckInfo::Basic((tid_info, sequence_control, clone_slice::<128>(bitmap)))
         }

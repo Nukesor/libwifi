@@ -24,7 +24,7 @@ crc = "3.2.1"
 enum_dispatch = "0.3"
 libwifi_macros = { version = "0.0.2", path = "../libwifi_macros" }
 log = "0.4"
-nom = "7"
+nom = "8"
 rand = "0.9"
 strum_macros = "0.27"
 thiserror = "2.0"

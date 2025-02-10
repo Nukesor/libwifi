@@ -1,23 +1,24 @@
-use nom::bytes::complete::take;
-use nom::combinator::opt;
-use nom::sequence::tuple;
+use nom::{bytes::complete::take, combinator::opt, Parser};
 
 use super::{clone_slice, parse_mac, parse_sequence_control};
-use crate::error::Error;
-use crate::frame::components::{DataHeader, FrameControl, ManagementHeader};
+use crate::{
+    error::Error,
+    frame::components::{DataHeader, FrameControl, ManagementHeader},
+};
 
 /// Parse and return the [ManagementHeader] from a given payload.
 pub fn parse_management_header(
     frame_control: FrameControl,
     input: &[u8],
 ) -> Result<(&[u8], ManagementHeader), Error> {
-    let (remaining, (duration, address_1, address_2, address_3, sequence_control)) = tuple((
+    let (remaining, (duration, address_1, address_2, address_3, sequence_control)) = (
         take(2usize),
         parse_mac,
         parse_mac,
         parse_mac,
         parse_sequence_control,
-    ))(input)?;
+    )
+        .parse(input)?;
 
     let duration = clone_slice::<2>(duration);
 
@@ -39,21 +40,21 @@ pub fn parse_data_header(
     frame_control: FrameControl,
     input: &[u8],
 ) -> Result<(&[u8], DataHeader), Error> {
-    let (mut remaining, (duration, address_1, address_2, address_3, sequence_control)) =
-        tuple((
-            take(2usize),
-            parse_mac,
-            parse_mac,
-            parse_mac,
-            parse_sequence_control,
-        ))(input)?;
+    let (mut remaining, (duration, address_1, address_2, address_3, sequence_control)) = (
+        take(2usize),
+        parse_mac,
+        parse_mac,
+        parse_mac,
+        parse_sequence_control,
+    )
+        .parse(input)?;
 
     let duration = clone_slice::<2>(duration);
 
     // The forth address only exists if both `from_ds` and `to_ds` is set.
     let mut address_4 = None;
     if frame_control.to_ds() && frame_control.from_ds() {
-        (remaining, address_4) = opt(parse_mac)(remaining)?;
+        (remaining, address_4) = opt(parse_mac).parse(remaining)?;
     };
 
     // If this is a Qos frame subtype, we go ahead and parse any Qos related info.

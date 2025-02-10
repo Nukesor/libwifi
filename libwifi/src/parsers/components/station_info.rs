@@ -1,8 +1,5 @@
 #![allow(dead_code)]
-use nom::bytes::complete::take;
-use nom::number::complete::u8 as get_u8;
-use nom::sequence::tuple;
-use nom::IResult;
+use nom::{bytes::complete::take, number::complete::u8 as get_u8, IResult, Parser};
 
 use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
@@ -30,7 +27,7 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
     let mut length;
     let mut data;
     loop {
-        (input, (element_id, length)) = tuple((get_u8, get_u8))(input)?;
+        (input, (element_id, length)) = (get_u8, get_u8).parse(input)?;
         (input, data) = take(length)(input)?;
         if !data.is_empty() {
             match element_id {
