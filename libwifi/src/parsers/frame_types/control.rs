@@ -1,9 +1,9 @@
 use nom::{
+    Parser,
     bits::{bits, complete::take as bit_take},
     bytes::complete::take,
     error::Error as NomError,
     number::complete::le_u64,
-    Parser,
 };
 
 use crate::frame::components::{FrameControl, SequenceControl};
@@ -94,7 +94,7 @@ pub fn parse_block_ack_request(frame_control: FrameControl, input: &[u8]) -> Res
         (true, false) => {
             return Err(Error::UnhandledProtocol(
                 "BlockAckMode::Reserved in BlockAck parser.".to_string(),
-            ))
+            ));
         }
         (false, false) => {
             // In normal ACK mode, the tid_info field also contains the TID for
@@ -188,7 +188,7 @@ pub fn parse_block_ack(frame_control: FrameControl, input: &[u8]) -> Result<Fram
         (true, false) => {
             return Err(Error::UnhandledProtocol(
                 "BlockAckMode::Reserved in BlockAck parser.".to_string(),
-            ))
+            ));
         }
         (false, false) => {
             // In normal ACK mode, the tid_info field also contains the TID for

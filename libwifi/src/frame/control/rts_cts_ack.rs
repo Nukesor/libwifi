@@ -1,5 +1,5 @@
-use crate::frame::components::{FrameControl, MacAddress};
 use crate::Addresses;
+use crate::frame::components::{FrameControl, MacAddress};
 
 /// It indicates to the Station, that a node wants to send some data.
 ///

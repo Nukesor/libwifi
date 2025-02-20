@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use nom::{bytes::complete::take, number::complete::u8 as get_u8, IResult, Parser};
+use nom::{IResult, Parser, bytes::complete::take, number::complete::u8 as get_u8};
 
 use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
@@ -230,8 +230,8 @@ fn parse_wps_information(data: &[u8]) -> Result<WpsInformation, &'static str> {
 
 fn bytes_to_category(catbytes: Vec<u8>, subbytes: Vec<u8>) -> Option<Category> {
     if catbytes.len() == 2 {
-        let value = u16::from(catbytes[0]) << 8 | u16::from(catbytes[1]);
-        let subvalue = u16::from(subbytes[0]) << 8 | u16::from(subbytes[1]);
+        let value = (u16::from(catbytes[0]) << 8) | u16::from(catbytes[1]);
+        let subvalue = (u16::from(subbytes[0]) << 8) | u16::from(subbytes[1]);
         match value {
             0x0001 => match subvalue {
                 0x0001 => Some(Category::Computer(Computers::PC)),
@@ -350,7 +350,7 @@ fn bytes_to_category(catbytes: Vec<u8>, subbytes: Vec<u8>) -> Option<Category> {
 
 fn bytes_to_subcategory(category: &Category, bytes: Vec<u8>) -> Option<String> {
     if bytes.len() == 2 {
-        let value = u16::from(bytes[0]) << 8 | u16::from(bytes[1]);
+        let value = (u16::from(bytes[0]) << 8) | u16::from(bytes[1]);
         match category {
             Category::Computer(_) => match value {
                 0x0001 => Some(Computers::PC.to_string()),

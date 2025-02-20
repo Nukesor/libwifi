@@ -1,16 +1,16 @@
 [workspace]
 exclude = ["examples/capture_example"]
 members = ["libwifi", "libwifi_macros"]
-resolver = "2"
+resolver = "3"
 
 [workspace.package]
 authors = ["Arne Beer <contact@arne.beer>"]
 documentation = "https://docs.rs/libwifi/"
-edition = "2021"
+edition = "2024"
 homepage = "https://github.com/nukesor/libwifi"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/nukesor/libwifi"
-rust-version = "1.82"
+rust-version = "1.85"
 
 [profile.release]
 codegen-units = 1

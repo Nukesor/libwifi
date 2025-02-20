@@ -1,5 +1,5 @@
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
-use rand::{thread_rng, Rng};
+use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use rand::{Rng, rng};
 
 use libwifi::parse_frame;
 
@@ -37,8 +37,8 @@ const BEACON_PAYLOAD: [u8; 272] = [
 ];
 
 pub fn parse_beacon(crit: &mut Criterion) {
-    let mut rng = thread_rng();
-    let random: u8 = rng.gen();
+    let mut rng = rng();
+    let random: u8 = rng.random();
     let mut payload = BEACON_PAYLOAD;
 
     // Log raw byte throughput

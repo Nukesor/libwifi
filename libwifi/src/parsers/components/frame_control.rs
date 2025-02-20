@@ -1,7 +1,7 @@
 use nom::{
+    IResult,
     bits::{bits, complete::take},
     error::Error,
-    IResult,
 };
 
 use crate::frame::components::FrameControl;
