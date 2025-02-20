@@ -1,7 +1,7 @@
 use std::fmt;
 use std::hash::Hash;
 
-use rand::{rng, Rng, RngCore};
+use rand::{Rng, RngCore, rng};
 
 /// This is our representation of a MAC-address
 ///
@@ -33,11 +33,11 @@ impl MacAddress {
     /// Generate u64.
     pub fn to_u64(&self) -> u64 {
         let bytes = self.0;
-        (bytes[0] as u64) << 40
-            | (bytes[1] as u64) << 32
-            | (bytes[2] as u64) << 24
-            | (bytes[3] as u64) << 16
-            | (bytes[4] as u64) << 8
+        ((bytes[0] as u64) << 40)
+            | ((bytes[1] as u64) << 32)
+            | ((bytes[2] as u64) << 24)
+            | ((bytes[3] as u64) << 16)
+            | ((bytes[4] as u64) << 8)
             | (bytes[5] as u64)
     }
 
@@ -302,7 +302,7 @@ impl MacAddressGlob {
                         b'a'..=b'f' => low - b'a' + 10,
                         _ => return Err(MacGlobParseError::InvalidDigit),
                     };
-                    (high_nibble << 4 | low_nibble, 0xFF)
+                    ((high_nibble << 4) | low_nibble, 0xFF)
                 }
                 _ => return Err(MacGlobParseError::InvalidDigit),
             };

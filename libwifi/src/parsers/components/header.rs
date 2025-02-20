@@ -1,4 +1,4 @@
-use nom::{bytes::complete::take, combinator::opt, Parser};
+use nom::{Parser, bytes::complete::take, combinator::opt};
 
 use super::{clone_slice, parse_mac, parse_sequence_control};
 use crate::{

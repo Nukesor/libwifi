@@ -1,6 +1,6 @@
-use nom::bytes::complete::take;
-use nom::number::complete::{le_u16, le_u64, le_u8};
 use nom::Parser;
+use nom::bytes::complete::take;
+use nom::number::complete::{le_u8, le_u16, le_u64};
 
 use crate::error::Error;
 use crate::frame::components::FrameControl;

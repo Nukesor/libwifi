@@ -1,5 +1,5 @@
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
-use rand::{thread_rng, Rng};
+use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use rand::{Rng, rng};
 
 use libwifi::parse_frame;
 
@@ -18,8 +18,8 @@ const DATA_PAYLOAD: [u8; 112] = [
 
 pub fn parse_data(crit: &mut Criterion) {
     // Add some random variable to prevent aggressive compiler optimizations;
-    let mut rng = thread_rng();
-    let random: u8 = rng.gen();
+    let mut rng = rng();
+    let random: u8 = rng.random();
     let mut payload = DATA_PAYLOAD;
 
     // Log raw byte throughput

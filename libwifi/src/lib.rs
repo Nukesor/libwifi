@@ -19,7 +19,7 @@ pub use crate::frame::Frame;
 pub use crate::frame_types::*;
 pub use crate::traits::*;
 
-use crc::{Crc, CRC_32_ISO_HDLC};
+use crc::{CRC_32_ISO_HDLC, Crc};
 
 // CRC algorithm for FCS calculation
 const CRC_32: Crc<u32> = Crc::<u32>::new(&CRC_32_ISO_HDLC);

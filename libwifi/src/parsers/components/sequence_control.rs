@@ -1,4 +1,4 @@
-use nom::{bytes::complete::take, IResult};
+use nom::{IResult, bytes::complete::take};
 
 use crate::frame::components::SequenceControl;
 
