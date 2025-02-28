@@ -1,12 +1,40 @@
 use strum_macros::Display;
 
+/// Enum with protocol version
+#[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
+pub enum FrameProtocolVersion {
+    PV0,
+    Unknown(u8),
+}
+impl FrameProtocolVersion {
+    pub fn to_bytes(&self) -> u8 {
+        match self {
+            FrameProtocolVersion::PV0 => 0,
+            FrameProtocolVersion::Unknown(x) => *x,
+        }
+    }
+}
+
 /// Enum with all frame types.
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug, Display)]
 pub enum FrameType {
     Management,
     Control,
     Data,
-    Unknown,
+    Extension,
+    Unknown(u8),
+}
+
+impl FrameType {
+    pub fn to_bytes(&self) -> u8 {
+        match self {
+            FrameType::Management => 0,
+            FrameType::Control => 1,
+            FrameType::Data => 2,
+            FrameType::Extension => 3,
+            FrameType::Unknown(x) => *x,
+        }
+    }
 }
 
 pub enum ManagementSubTypes {
@@ -79,9 +107,13 @@ pub enum FrameSubType {
     QosCfPoll,
     QosCfAckCfPoll,
 
+    // Extension subtypes
+    DMGBeacon,
+    S1GBeacon,
+
     // Special subtypes
-    Unhandled,
-    Reserved,
+    Unhandled(u8),
+    Reserved(u8),
 }
 
 impl FrameSubType {
@@ -143,7 +175,10 @@ impl FrameSubType {
             FrameSubType::QosNull => 12,
             FrameSubType::QosCfPoll => 14,
             FrameSubType::QosCfAckCfPoll => 15,
-            _ => 255,
+            FrameSubType::DMGBeacon => 0,
+            FrameSubType::S1GBeacon => 1,
+            FrameSubType::Unhandled(x) => *x,
+            FrameSubType::Reserved(x) => *x,
         }
     }
 }

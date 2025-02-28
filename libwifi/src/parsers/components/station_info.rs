@@ -398,6 +398,9 @@ pub fn parse_rsn_information(data: &[u8]) -> Result<RsnInformation, &'static str
 
     let mut pairwise_cipher_suites = Vec::new();
     for _ in 0..pairwise_cipher_suite_count {
+        if data.len() < offset + 4 {
+            return Err("Pairwise cipher suite data field too short");
+        }
         let suite = parse_pairwise_cipher_suite(&data[offset..offset + 4]);
         pairwise_cipher_suites.push(suite);
         offset += 4;
@@ -408,6 +411,9 @@ pub fn parse_rsn_information(data: &[u8]) -> Result<RsnInformation, &'static str
 
     let mut akm_suites = Vec::new();
     for _ in 0..akm_suite_count {
+        if data.len() < offset + 4 {
+            return Err("AKM suite data field too short");
+        }
         let suite = parse_akm_suite(&data[offset..offset + 4]);
         akm_suites.push(suite);
         offset += 4;
