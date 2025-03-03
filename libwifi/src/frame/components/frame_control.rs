@@ -17,12 +17,15 @@ fn flag_is_set(data: u8, bit: u8) -> bool {
 ///
 /// First byte:
 ///
-/// - **bit_0-1**: Protocol version.
-///     Until now, this has always been 0 and is expected to be 0.
+/// - **bit_0-1**: [FrameProtocolVersion]
 /// - **bit_2-3**: [FrameType]
 /// - **bit_4-7**: [FrameSubType]
 ///
-/// Second byte (Flags):
+/// The values of the remaining bytes depend on protocol version, frame type and sub type.
+///
+/// In the general case:
+///
+/// PV0 Second byte (Flags):
 /// - **bit_0** `to_ds`: Set if the frame is to be sent by the AP to the distribution system.
 /// - **bit_1** `from_ds`: Set if the frame is from the distribution system.
 /// - **bit_2** `more_frag`: Set if this frame is a fragment of a bigger frame and there are more fragments to follow.
@@ -30,11 +33,12 @@ fn flag_is_set(data: u8, bit: u8) -> bool {
 /// - **bit_4** `power_mgmt`: Indicates what power mode (`save` or `active`) the station will be in, once the frame has been sent.
 /// - **bit_5** `more_data`: Set by the AP to indicate that more frames are destined to a particular station that may be in power save mode.
 ///                     These frames will be buffered at the AP, so it can be sent once the station decides to become `active`.
-/// - **bit_6** `wep`: Set if WEP is being used to encrypt the body of the frame.
+/// - **bit_6** `protected`: Set if the frame body is encrypted (protected)
 /// - **bit_7** `order`: Set if the frame is being sent according to the _Strictly Ordered Class_.
+///
 #[derive(Clone, Debug)]
 pub struct FrameControl {
-    pub protocol_version: u8,
+    pub protocol_version: FrameProtocolVersion,
     pub frame_type: FrameType,
     pub frame_subtype: FrameSubType,
     pub flags: u8,
@@ -65,7 +69,12 @@ impl FrameControl {
         flag_is_set(self.flags, 5)
     }
 
+    #[deprecated(note = "please use `protected` instead")]
     pub fn wep(&self) -> bool {
+        flag_is_set(self.flags, 6)
+    }
+
+    pub fn protected(&self) -> bool {
         flag_is_set(self.flags, 6)
     }
 
@@ -74,8 +83,8 @@ impl FrameControl {
     }
 
     pub fn encode(&self) -> [u8; 2] {
-        let protocol_version_bits = self.protocol_version & 0b11; // 2 bits
-        let frame_type_bits = (self.frame_type as u8 & 0b11) << 2; // 2 bits
+        let protocol_version_bits = self.protocol_version.to_bytes() & 0b11; // 2 bits
+        let frame_type_bits = (self.frame_type.to_bytes() & 0b11) << 2; // 2 bits
         let frame_subtype_bits = (self.frame_subtype.to_bytes() & 0b1111) << 4; // 4 bits
 
         let first_byte = frame_subtype_bits | frame_type_bits | protocol_version_bits;
@@ -98,7 +107,7 @@ mod tests {
             3 => frame_control.retry(),
             4 => frame_control.pwr_mgmt(),
             5 => frame_control.more_data(),
-            6 => frame_control.wep(),
+            6 => frame_control.protected(),
             7 => frame_control.order(),
             _ => panic!("Unhandled bit {bit}"),
         }
