@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.4.4] - unreleased
 
+### Added
+
+- RA, TA, DA, SA fields can now be accessed directly in Data frames (#39)
+- Frame type and subtype included in error messages for unsupported frames (#38)
+- Improved bounds checking when parsing station info data (#38)
+- Protocol versions other than 0 and extension frames are recognised and included in error messages (but they are not parsed yet) (#38)
+
+### Changes
+
+- FrameControl header field `wep` deprecated and renamed to `protected` to match the standard (#38)
+
 ### Chore
 
 - Switch to Rust 2024 edition. This bumps the MSRV to `1.85`.
