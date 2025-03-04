@@ -19,6 +19,7 @@ harness = false
 name = "parse_data"
 
 [dependencies]
+bitvec = "1.0.1"
 byteorder = "1.5.0"
 crc = "3.2.1"
 enum_dispatch = "0.3"
@@ -28,6 +29,7 @@ nom = "8"
 rand = "0.9"
 strum_macros = "0.27"
 thiserror = "2.0"
+
 
 [dev-dependencies]
 criterion = "0.5"

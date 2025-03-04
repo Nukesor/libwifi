@@ -58,6 +58,35 @@ fn test_single_tid_compressed_block_ack_request() {
 
     if let Frame::BlockAckRequest(inner) = frame {
         assert!(matches!(inner.mode, BlockAckMode::CompressedBlockAck));
+    } else {
+        panic!("invalid frame type");
+    }
+}
+
+#[test]
+fn test_single_tid_compressed_block_ack_request_detailed() {
+    let payload = [
+        132, 0, // FrameControl
+        58, 1, // Duration
+        192, 238, 251, 75, 207, 58, // First Address
+        24, 29, 234, 198, 62, 190, // Second Address
+        4, 0x10, // BlockAckRequest Control with TID=1
+        160, 15, // Starting sequence number of the single TID
+    ];
+
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
+    println!("{frame:?}");
+    assert!(matches!(frame, Frame::BlockAckRequest(_)));
+
+    if let Frame::BlockAckRequest(inner) = frame {
+        assert!(matches!(inner.mode, BlockAckMode::CompressedBlockAck));
+        assert!(inner.requested_tids.len() == 1);
+        let (tid, seq) = inner.requested_tids.first().unwrap();
+        assert!(*tid == 1);
+        assert!(seq.fragment_number == 0);
+        assert!(seq.sequence_number == 250);
+    } else {
+        panic!("invalid frame type");
     }
 }
 
@@ -79,5 +108,50 @@ fn test_compressed_bitmap_block_ack() {
 
     if let Frame::BlockAck(inner) = frame {
         assert!(matches!(inner.mode, BlockAckMode::CompressedBlockAck));
+    } else {
+        panic!("invalid frame type");
+    }
+}
+
+#[test]
+fn test_compressed_bitmap_block_ack_detailed() {
+    let payload = [
+        148, 0, // FrameControl
+        0, 0, // Duration
+        192, 238, 251, 75, 207, 58, // First Address
+        248, 50, 228, 173, 71, 184, // Second Address
+        5, 0x10, // BlockAck Control with tid=1
+        144, 4, // BlockAck starting sequence control, seqnr 73, fragment 0
+        0x3f, 0, 0, 0, 0, 0, 0, 0, // BlockAck Bitmap, ACK first 6 frames
+    ];
+
+    let frame = parse_frame(&payload, false).expect("Payload should be valid");
+    println!("{frame:?}");
+    assert!(matches!(frame, Frame::BlockAck(_)));
+
+    if let Frame::BlockAck(inner) = frame {
+        assert!(matches!(inner.mode, BlockAckMode::CompressedBlockAck));
+        assert!(inner.policy); // immediate ack is set
+
+        if let BlockAckInfo::Compressed(acks) = inner.acks {
+            assert!(acks.len() == 1);
+
+            let (tid, start_seq, bitmap) = acks.first().unwrap();
+            assert!(*tid == 1);
+            assert!(start_seq.fragment_number == 0);
+            assert!(start_seq.sequence_number == 73);
+
+            let mut acked: Vec<u16> = Vec::new();
+            for i in 0..64 {
+                if (bitmap & (1 << i)) > 0 {
+                    acked.push(start_seq.sequence_number + i);
+                }
+            }
+            assert!(acked == vec![73, 74, 75, 76, 77, 78]);
+        } else {
+            panic!("BlockAckInfo had wrong type");
+        }
+    } else {
+        panic!("invalid frame type");
     }
 }
