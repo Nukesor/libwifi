@@ -133,3 +133,7 @@ If we take this as a rough guideline, you can roughly expect 3-35 million frames
 
 There's a lot more to the IEE 802.11 spec and a lot of stuff needs to be done. \
 If you find that something you need is missing, consider creating a ticket and contributing :).
+
+### Fuzzing
+
+`cargo-fuzz` can be used to check for potential crashes while processing unvalidated input data. After [installing cargo-fuzz](https://github.com/rust-fuzz/cargo-fuzz) (note: may require rust nightly), the frame parsing can be tested with `cargo fuzz run parse_frame`.
