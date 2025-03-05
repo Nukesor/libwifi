@@ -406,6 +406,9 @@ pub fn parse_rsn_information(data: &[u8]) -> Result<RsnInformation, &'static str
         offset += 4;
     }
 
+    if offset + 1 >= data.len() {
+        return Err("Data field to short");
+    }
     let akm_suite_count = u16::from_ne_bytes([data[offset], data[offset + 1]]) as usize;
     offset += 2;
 
