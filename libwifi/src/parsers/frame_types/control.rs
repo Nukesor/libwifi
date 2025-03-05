@@ -1,3 +1,6 @@
+use bitvec::order::Lsb0;
+use bitvec::prelude::*;
+use bitvec::vec::BitVec;
 use nom::{
     Parser,
     bits::{bits, complete::take as bit_take},
@@ -8,7 +11,7 @@ use nom::{
 
 use crate::frame::components::{FrameControl, SequenceControl};
 use crate::frame::*;
-use crate::parsers::{clone_slice, flag, parse_mac};
+use crate::parsers::{clone_slice, parse_mac};
 use crate::{error::Error, parsers::parse_sequence_control};
 
 /// Parse a [Rts] frame.
@@ -69,15 +72,14 @@ pub fn parse_block_ack_request(frame_control: FrameControl, input: &[u8]) -> Res
     let (mut request_information, (duration, destination, source, bar_control)) =
         (take(2usize), parse_mac, parse_mac, take(2usize)).parse(input)?;
 
-    let (_, (policy, multi_tid, compressed_bitmap, _, tid_info)) =
-        bits::<_, (bool, bool, bool, u16, u8), NomError<(&[u8], usize)>, _, _>((
-            flag,
-            flag,
-            flag,
-            // These are the reserved
-            bit_take(9usize),
-            bit_take(4usize),
-        ))(bar_control)?;
+    let b = BitVec::<u8, Lsb0>::from_slice(bar_control);
+    let (policy, multi_tid, compressed_bitmap, _, tid_info) = (
+        b[0],
+        b[1],
+        b[2],
+        b[3..11].load::<u8>(), // reserved
+        b[12..15].load::<u8>(),
+    );
 
     // The TID_INFO and the BAR information field work in conjunction to provide information on
     // the number of TIDs in let number = ((vector[0] as u16) << 8) | vector[1] as u16;the request and starting sequence control and per TID info in the
@@ -163,15 +165,14 @@ pub fn parse_block_ack(frame_control: FrameControl, input: &[u8]) -> Result<Fram
     let (mut ack_information, (duration, destination, source, bar_control)) =
         (take(2usize), parse_mac, parse_mac, take(2usize)).parse(input)?;
 
-    let (_, (policy, multi_tid, compressed_bitmap, _, tid_info)) =
-        bits::<_, (bool, bool, bool, u16, u8), NomError<(&[u8], usize)>, _, _>((
-            flag,
-            flag,
-            flag,
-            // These are the reserved
-            bit_take(9usize),
-            bit_take(4usize),
-        ))(bar_control)?;
+    let b = BitVec::<u8, Lsb0>::from_slice(bar_control);
+    let (policy, multi_tid, compressed_bitmap, _, tid_info) = (
+        b[0],
+        b[1],
+        b[2],
+        b[3..11].load::<u8>(), // reserved
+        b[12..15].load::<u8>(),
+    );
 
     // The TID_INFO and the BAR information field work in conjunction to provide information on
     // the number of TIDs in let number = ((vector[0] as u16) << 8) | vector[1] as u16;the request and starting sequence control and per TID info in the
