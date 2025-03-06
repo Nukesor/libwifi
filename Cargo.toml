@@ -1,5 +1,5 @@
 [workspace]
-exclude = ["examples/capture_example"]
+exclude = ["examples/capture_example", "fuzz"]
 members = ["libwifi", "libwifi_macros"]
 resolver = "3"
 
