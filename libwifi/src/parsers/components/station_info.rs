@@ -1,12 +1,13 @@
 #![allow(dead_code)]
+use bitvec::prelude::*;
 use nom::{IResult, Parser, bytes::complete::take, number::complete::u8 as get_u8};
 
 use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
-    Displays, DockingDevices, GamingDevices, HTInformation, InputDevices, MultimediaDevices,
-    NetworkInfrastructure, PrintersEtAl, RsnAkmSuite, RsnCipherSuite, RsnInformation, StationInfo,
-    Storage, SupportedRate, Telephone, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite,
-    WpaInformation, WpsInformation, WpsSetupState,
+    Displays, DockingDevices, ExtendedCapabilities, GamingDevices, HTInformation, InputDevices,
+    MultimediaDevices, MultipleBSSID, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite,
+    RsnCipherSuite, RsnInformation, StationInfo, Storage, SupportedRate, Telephone,
+    VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
 };
 
 /// Parse variable length and variable field information.
@@ -39,6 +40,13 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                 1 => station_info.supported_rates = parse_supported_rates(data),
                 3 => station_info.ds_parameter_set = Some(data[0]),
                 5 => station_info.tim = Some(data.to_vec()),
+                6 => {
+                    station_info.ibss_parameter_set = if data.len() >= 2 {
+                        Some(u16::from_le_bytes([data[0], data[1]]))
+                    } else {
+                        None
+                    }
+                }
                 7 => station_info.country_info = Some(data.to_vec()),
                 32 => station_info.power_constraint = Some(data[0]),
                 37 => station_info.channel_switch = parse_channel_switch(data),
@@ -54,6 +62,12 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                         station_info.ht_information = Some(ht_info)
                     }
                 }
+                71 => {
+                    if let Ok(multiple_bssid) = parse_multiple_bssid(data) {
+                        station_info.multiple_bssid = Some(multiple_bssid)
+                    }
+                }
+                127 => station_info.extended_capabilities = parse_extended_capabilities(data).ok(),
                 191 => station_info.vht_capabilities = Some(data.to_vec()),
                 221 => {
                     // Vendor-specific tag
@@ -147,6 +161,104 @@ fn parse_wpa_information(data: &[u8]) -> Result<WpaInformation, &'static str> {
     })
 }
 
+fn parse_extended_capabilities(data: &[u8]) -> Result<ExtendedCapabilities, &'static str> {
+    if data.is_empty() {
+        return Err("Extended capabilities is empty");
+    }
+    let mut b = BitVec::<_, Lsb0>::from_slice(data);
+    b.resize(90, false); // extend to max value, fill with 0
+
+    Ok(ExtendedCapabilities {
+        bss_coexistence_management_support: b[0],
+        glk: b[1],
+        extended_channel_switching: b[2],
+        glk_gcr: b[3],
+        psmp_capability: b[4],
+        //reserved5: b[5],
+        s_psmp_capability: b[6],
+        event: b[7],
+        diagnostics: b[8],
+        multicast_diagnostics: b[9],
+        location_tracking: b[10],
+        fms: b[11],
+        proxy_arp_service: b[12],
+        collocated_interference_reporting: b[13],
+        civic_location: b[14],
+        geospatial_location: b[15],
+        tfs: b[16],
+        wnm_sleep_mode: b[17],
+        tim_broadcast: b[18],
+        bss_transition: b[19],
+        qos_traffic_capability: b[20],
+        ac_station_count: b[21],
+        multiple_bssid: b[22],
+        timing_measurement: b[23],
+        channel_usage: b[24],
+        ssid_list: b[25],
+        dms: b[26],
+        utc_tsf_offset: b[27],
+        tpu_buffer_sta_support: b[28],
+        tdls_peer_psm_support: b[29],
+        tdls_channel_switching: b[30],
+        internetworking: b[31],
+        qos_map: b[32],
+        ebr: b[33],
+        sspn_interface: b[34],
+        //reserved35: b[35],
+        msgcf_capability: b[36],
+        tdls_support: b[37],
+        tdls_prohibited: b[38],
+        tdls_channel_switching_prohibited: b[39],
+        reject_unadmitted_frame: b[40],
+        service_interval_granularity: b[41..43].load(),
+        identifier_location: b[44],
+        uapsd_coexistence: b[45],
+        wnm_notification: b[46],
+        qab_capability: b[47],
+        utf8_ssid: b[48],
+        qmf_activated: b[49],
+        qmf_reconfiguration_activated: b[50],
+        robust_av_streaming: b[51],
+        advanced_gcr: b[52],
+        mesh_gcr: b[53],
+        scs: b[54],
+        qload_report: b[55],
+        alternate_edca: b[56],
+        unprotected_txop_negotiation: b[57],
+        protected_txop_negotiation: b[58],
+        //reserved59: b[59],
+        protected_qload_report: b[60],
+        tdls_wider_bandwidth: b[61],
+        operating_mode_notification: b[62],
+        max_number_of_msdus_in_amsdu: b[63..64].load(),
+        channel_schedule_management: b[65],
+        geodatabase_inband_enabling_signal: b[66],
+        network_channel_control: b[67],
+        white_space_map: b[68],
+        channel_availability_query: b[69],
+        fine_timing_measurement_responder: b[70],
+        fine_timing_measurement_initiator: b[71],
+        fils_capability: b[72],
+        extended_spectrum_management_capable: b[73],
+        future_channel_guidance: b[74],
+        pad: b[75],
+        //reserved76: b[76],
+        twt_requester_support: b[77],
+        twt_responder_support: b[78],
+        obss_narrow_bandwidth_ru_in_odfma_tolerance_support: b[79],
+        complete_list_of_nontxbssid_profiles: b[80],
+        sae_password_in_use: b[81],
+        sae_password_used_exclusively: b[82],
+        enhanced_multibssid_advertisement_support: b[83],
+        beacon_protection_enabled: b[84],
+        mirrored_scs: b[85],
+        oct: b[86],
+        local_mac_address_policy: b[87],
+        //reserved88: b[88],
+        twt_parameters_range_support: b[89],
+    })
+}
+
 fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
     if data.is_empty() {
         return Err("WPA Information data too short");
@@ -154,6 +266,17 @@ fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
 
     Ok(HTInformation {
         primary_channel: data[0],
+        other_data: data[1..].to_vec(),
+    })
+}
+
+fn parse_multiple_bssid(data: &[u8]) -> Result<MultipleBSSID, &'static str> {
+    // shortest possible length is maxBSSIDIndicator u8
+    if data.is_empty() {
+        return Err("Multiple BSSID data too short");
+    }
+    Ok(MultipleBSSID {
+        max_bssid_indicator: data[0],
         other_data: data[1..].to_vec(),
     })
 }

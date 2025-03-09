@@ -8,10 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
+- Parsing/encoding for additional station info fields: (#44)
+    - Extended capabilities (up to and including 802.11ax)
+    - MultiBSSID
+    - IBSS parameter set
 - RA, TA, DA, SA fields can now be accessed directly in Data frames (#39)
 - Frame type and subtype included in error messages for unsupported frames (#38)
-- Improved bounds checking when parsing station info data (#38)
 - Protocol versions other than 0 and extension frames are recognised and included in error messages (but they are not parsed yet) (#38)
+
+### Fixed
+
+- Improved bounds checking when parsing station info data (#38, #43)
+- BlockAck and BlockAckRequest didn't parse the bar_control field correctly, resulting in TID always being zero (#41)
 
 ### Changes
 

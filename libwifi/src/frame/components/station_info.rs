@@ -1,5 +1,7 @@
 use std::fmt::{self, Display};
 
+use bitvec::{field::BitField, order::Lsb0, vec::BitVec};
+
 #[derive(Clone, Debug, Default)]
 /// StationInfo is used to parse and store variable length fields that are often sent
 /// with management frames.
@@ -20,17 +22,19 @@ pub struct StationInfo {
     pub ssid: Option<String>,
     pub ssid_length: Option<usize>,
     pub ds_parameter_set: Option<u8>,
+    pub ibss_parameter_set: Option<u16>,
     pub tim: Option<Vec<u8>>,
     pub country_info: Option<Vec<u8>>,
     pub power_constraint: Option<u8>,
     pub ht_capabilities: Option<Vec<u8>>,
     pub ht_information: Option<HTInformation>,
+    pub multiple_bssid: Option<MultipleBSSID>,
     pub vht_capabilities: Option<Vec<u8>>,
     pub rsn_information: Option<RsnInformation>,
     pub wpa_info: Option<WpaInformation>,
     pub wps_info: Option<WpsInformation>,
     pub vendor_specific: Vec<VendorSpecificInfo>,
-    pub extended_capabilities: Option<Vec<u8>>,
+    pub extended_capabilities: Option<ExtendedCapabilities>,
     pub channel_switch: Option<ChannelSwitchAnnouncment>,
     /// Contains all fields that aren't explicitly parsed by us.
     /// The format is Vec<(FieldId, PayloadBytes)>.
@@ -96,6 +100,13 @@ impl StationInfo {
             bytes.extend(tim);
         }
 
+        // Encode IBSS element set - Tag Number: 6
+        if let Some(ibss_parameter_set) = self.ibss_parameter_set {
+            bytes.push(6);
+            bytes.push(2);
+            bytes.extend(u16::to_le_bytes(ibss_parameter_set));
+        }
+
         // Encode Country Info (if present) - Tag Number: 7
         if let Some(country_info) = &self.country_info {
             bytes.push(7); // Country Info tag number
@@ -123,6 +134,14 @@ impl StationInfo {
             bytes.push(61); // HT Capabilities tag number
             bytes.push(ht_info_data.len() as u8); // Length of HT Capabilities
             bytes.extend(ht_info_data);
+        }
+
+        // Encode Multiple BSSID (if present) - Tag Number: 71
+        if let Some(multiple_bssid) = &self.multiple_bssid {
+            let multiple_bssid_data = multiple_bssid.encode();
+            bytes.push(71);
+            bytes.push(multiple_bssid_data.len() as u8);
+            bytes.extend(multiple_bssid_data);
         }
 
         // Encode VHT Capabilities (if present) - Tag Number: 191
@@ -161,8 +180,9 @@ impl StationInfo {
         // Encode Extended Capabilities (if present)
         if let Some(ext_caps) = &self.extended_capabilities {
             bytes.push(127);
-            bytes.push(ext_caps.len() as u8);
-            bytes.extend(ext_caps);
+            let data = ext_caps.encode();
+            bytes.push(data.len() as u8);
+            bytes.extend(data);
         }
 
         if let Some(chan_switch) = &self.channel_switch {
@@ -801,6 +821,21 @@ impl HTInformation {
 }
 
 #[derive(Debug, Clone)]
+pub struct MultipleBSSID {
+    pub max_bssid_indicator: u8,
+    pub other_data: Vec<u8>,
+}
+
+impl MultipleBSSID {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut data: Vec<u8> = Vec::new();
+        data.push(self.max_bssid_indicator);
+        data.extend(&self.other_data);
+        data
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct ChannelSwitchAnnouncment {
     pub mode: ChannelSwitchMode,
     pub new_channel: u8,
@@ -825,5 +860,194 @@ impl ChannelSwitchMode {
             1 => ChannelSwitchMode::Restrict,
             _ => ChannelSwitchMode::Unrestricted,
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExtendedCapabilities {
+    // Extended capabilities elements per 80211ax-2021
+    pub bss_coexistence_management_support: bool, // bit 0
+    pub glk: bool,                                // 1
+    pub extended_channel_switching: bool,         // 2
+    pub glk_gcr: bool,                            // 3
+    pub psmp_capability: bool,                    // 4
+    //pub reserved5: bool,                          // 5
+    pub s_psmp_capability: bool,                 // 6
+    pub event: bool,                             // 7
+    pub diagnostics: bool,                       // 8
+    pub multicast_diagnostics: bool,             // 9
+    pub location_tracking: bool,                 // 10
+    pub fms: bool,                               // 11
+    pub proxy_arp_service: bool,                 // 12
+    pub collocated_interference_reporting: bool, // 13
+    pub civic_location: bool,                    // 14
+    pub geospatial_location: bool,               // 15
+    pub tfs: bool,                               // 16
+    pub wnm_sleep_mode: bool,                    // 17
+    pub tim_broadcast: bool,                     // 18
+    pub bss_transition: bool,                    // 19
+    pub qos_traffic_capability: bool,            // 20
+    pub ac_station_count: bool,                  // 21
+    pub multiple_bssid: bool,                    // 22
+    pub timing_measurement: bool,                // 23
+    pub channel_usage: bool,                     // 24
+    pub ssid_list: bool,                         // 25
+    pub dms: bool,                               // 26
+    pub utc_tsf_offset: bool,                    // 27
+    pub tpu_buffer_sta_support: bool,            // 28
+    pub tdls_peer_psm_support: bool,             // 29
+    pub tdls_channel_switching: bool,            // 30
+    pub internetworking: bool,                   // 31
+    pub qos_map: bool,                           // 32
+    pub ebr: bool,                               // 33
+    pub sspn_interface: bool,                    // 34
+    //pub reserved35: bool,                         // 35
+    pub msgcf_capability: bool,                  // 36
+    pub tdls_support: bool,                      // 37
+    pub tdls_prohibited: bool,                   // 38
+    pub tdls_channel_switching_prohibited: bool, // 39
+    pub reject_unadmitted_frame: bool,           // 40
+    pub service_interval_granularity: u8,        // 41,42,43
+    pub identifier_location: bool,               // 44
+    pub uapsd_coexistence: bool,                 // 45
+    pub wnm_notification: bool,                  // 46
+    pub qab_capability: bool,                    // 47
+    pub utf8_ssid: bool,                         // 48
+    pub qmf_activated: bool,                     // 49
+    pub qmf_reconfiguration_activated: bool,     // 50
+    pub robust_av_streaming: bool,               // 51
+    pub advanced_gcr: bool,                      // 52
+    pub mesh_gcr: bool,                          // 53
+    pub scs: bool,                               // 54
+    pub qload_report: bool,                      // 55
+    pub alternate_edca: bool,                    // 56
+    pub unprotected_txop_negotiation: bool,      // 57
+    pub protected_txop_negotiation: bool,        // 58
+    //pub reserved59: bool,                         // 59
+    pub protected_qload_report: bool,               // 60
+    pub tdls_wider_bandwidth: bool,                 // 61
+    pub operating_mode_notification: bool,          // 62
+    pub max_number_of_msdus_in_amsdu: u8,           // 63, 64
+    pub channel_schedule_management: bool,          // 65
+    pub geodatabase_inband_enabling_signal: bool,   // 66
+    pub network_channel_control: bool,              // 67
+    pub white_space_map: bool,                      // 68
+    pub channel_availability_query: bool,           // 69
+    pub fine_timing_measurement_responder: bool,    // 70
+    pub fine_timing_measurement_initiator: bool,    // 71
+    pub fils_capability: bool,                      // 72
+    pub extended_spectrum_management_capable: bool, // 73
+    pub future_channel_guidance: bool,              // 74
+    pub pad: bool,                                  // 75
+    //pub reserved76: bool,                         // 76
+    pub twt_requester_support: bool, // 77
+    pub twt_responder_support: bool, // 78
+    pub obss_narrow_bandwidth_ru_in_odfma_tolerance_support: bool, // 79
+    pub complete_list_of_nontxbssid_profiles: bool, // 80
+    pub sae_password_in_use: bool,   // 81
+    pub sae_password_used_exclusively: bool, // 82
+    pub enhanced_multibssid_advertisement_support: bool, // 83
+    pub beacon_protection_enabled: bool, // 84
+    pub mirrored_scs: bool,          // 85
+    pub oct: bool,                   // 86
+    pub local_mac_address_policy: bool, // 87
+    //pub reserved88: bool,
+    pub twt_parameters_range_support: bool, // 89
+}
+
+impl ExtendedCapabilities {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut b = BitVec::<usize, Lsb0>::repeat(false, 90);
+
+        b.set(0, self.bss_coexistence_management_support);
+        b.set(1, self.glk);
+        b.set(2, self.extended_channel_switching);
+        b.set(3, self.glk_gcr);
+        b.set(4, self.psmp_capability);
+        //b.set(5,self.reserved5);
+        b.set(6, self.s_psmp_capability);
+        b.set(7, self.event);
+        b.set(8, self.diagnostics);
+        b.set(9, self.multicast_diagnostics);
+        b.set(10, self.location_tracking);
+        b.set(11, self.fms);
+        b.set(12, self.proxy_arp_service);
+        b.set(13, self.collocated_interference_reporting);
+        b.set(14, self.civic_location);
+        b.set(15, self.geospatial_location);
+        b.set(16, self.tfs);
+        b.set(17, self.wnm_sleep_mode);
+        b.set(18, self.tim_broadcast);
+        b.set(19, self.bss_transition);
+        b.set(20, self.qos_traffic_capability);
+        b.set(21, self.ac_station_count);
+        b.set(22, self.multiple_bssid);
+        b.set(23, self.timing_measurement);
+        b.set(24, self.channel_usage);
+        b.set(25, self.ssid_list);
+        b.set(26, self.dms);
+        b.set(27, self.utc_tsf_offset);
+        b.set(28, self.tpu_buffer_sta_support);
+        b.set(29, self.tdls_peer_psm_support);
+        b.set(30, self.tdls_channel_switching);
+        b.set(31, self.internetworking);
+        b.set(32, self.qos_map);
+        b.set(33, self.ebr);
+        b.set(34, self.sspn_interface);
+        //b.set(35,self.reserved35);
+        b.set(36, self.msgcf_capability);
+        b.set(37, self.tdls_support);
+        b.set(38, self.tdls_prohibited);
+        b.set(39, self.tdls_channel_switching_prohibited);
+        b.set(40, self.reject_unadmitted_frame);
+        b[41..43].store_le::<u8>(self.service_interval_granularity);
+        b.set(44, self.identifier_location);
+        b.set(45, self.uapsd_coexistence);
+        b.set(46, self.wnm_notification);
+        b.set(47, self.qab_capability);
+        b.set(48, self.utf8_ssid);
+        b.set(49, self.qmf_activated);
+        b.set(50, self.qmf_reconfiguration_activated);
+        b.set(51, self.robust_av_streaming);
+        b.set(52, self.advanced_gcr);
+        b.set(53, self.mesh_gcr);
+        b.set(54, self.scs);
+        b.set(55, self.qload_report);
+        b.set(56, self.alternate_edca);
+        b.set(57, self.unprotected_txop_negotiation);
+        b.set(58, self.protected_txop_negotiation);
+        //b.set(59]=self.reserved59);
+        b.set(60, self.protected_qload_report);
+        b.set(61, self.tdls_wider_bandwidth);
+        b.set(62, self.operating_mode_notification);
+        b[63..64].store_le::<u8>(self.max_number_of_msdus_in_amsdu);
+        b.set(65, self.channel_schedule_management);
+        b.set(66, self.geodatabase_inband_enabling_signal);
+        b.set(67, self.network_channel_control);
+        b.set(68, self.white_space_map);
+        b.set(69, self.channel_availability_query);
+        b.set(70, self.fine_timing_measurement_responder);
+        b.set(71, self.fine_timing_measurement_initiator);
+        b.set(72, self.fils_capability);
+        b.set(73, self.extended_spectrum_management_capable);
+        b.set(74, self.future_channel_guidance);
+        b.set(75, self.pad);
+        //b.set(76]=self.reserved76);
+        b.set(77, self.twt_requester_support);
+        b.set(78, self.twt_responder_support);
+        b.set(79, self.obss_narrow_bandwidth_ru_in_odfma_tolerance_support);
+        b.set(80, self.complete_list_of_nontxbssid_profiles);
+        b.set(81, self.sae_password_in_use);
+        b.set(82, self.sae_password_used_exclusively);
+        b.set(83, self.enhanced_multibssid_advertisement_support);
+        b.set(84, self.beacon_protection_enabled);
+        b.set(85, self.mirrored_scs);
+        b.set(86, self.oct);
+        b.set(87, self.local_mac_address_policy);
+        //b.set(88]=self.reserved88);
+        b.set(89, self.twt_parameters_range_support);
+
+        // Remove trailing zeros and convert to [u8], then vec
+        vec![b[0..b.len() - b.trailing_zeros()].load_le::<u8>()]
     }
 }
