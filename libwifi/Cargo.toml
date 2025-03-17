@@ -1,6 +1,6 @@
 [package]
 name = "libwifi"
-version = "0.4.3"
+version = "0.4.4"
 description = "A library for parsing IEEE 802.11 frames and handling wifi interfaces."
 keywords = ["802_11", "frame", "parser", "wifi"]
 authors.workspace = true
