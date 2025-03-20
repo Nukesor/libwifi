@@ -1,6 +1,11 @@
 #![allow(dead_code)]
 use bitvec::prelude::*;
-use nom::{IResult, Parser, bytes::complete::take, number::complete::u8 as get_u8};
+use nom::{
+    IResult, Parser,
+    bytes::complete::take,
+    error::{Error, ErrorKind},
+    number::complete::u8 as get_u8,
+};
 
 use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
@@ -78,9 +83,15 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                         let vendor_data = data[4..].to_vec();
 
                         if oui == [0x00, 0x50, 0xf2] && oui_type == 1 {
+                            let wpa_info = match parse_wpa_information(&vendor_data) {
+                                Ok(wpa_info) => wpa_info,
+                                Err(_) => {
+                                    let nom_error = Error::new(input, ErrorKind::Fail);
+                                    return Err(nom::Err::Error(nom_error));
+                                }
+                            };
                             // Specific parsing for WPA Information Element
-                            station_info.wpa_info =
-                                Some(parse_wpa_information(&vendor_data).unwrap());
+                            station_info.wpa_info = Some(wpa_info);
                         } else if oui == [0x00, 0x50, 0xf2] && oui_type == 4 {
                             // Specific parsing for WPS Information Element
                             station_info.wps_info = parse_wps_information(&vendor_data).ok();
