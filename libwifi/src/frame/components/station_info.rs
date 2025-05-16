@@ -21,6 +21,7 @@ pub struct StationInfo {
     pub extended_supported_rates: Option<Vec<SupportedRate>>,
     pub ssid: Option<String>,
     pub ssid_length: Option<usize>,
+    pub ssid_raw: Option<Vec<u8>>,
     pub ds_parameter_set: Option<u8>,
     pub ibss_parameter_set: Option<u16>,
     pub tim: Option<Vec<u8>>,

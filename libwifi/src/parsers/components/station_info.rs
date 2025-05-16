@@ -41,6 +41,8 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                     let ssid = String::from_utf8_lossy(data).to_string();
                     station_info.ssid = Some(ssid);
                     station_info.ssid_length = Some(length as usize);
+                    // if ssid is not utf8, can use the raw data.
+                    station_info.ssid_raw = Some(data[..length as usize].to_vec());
                 }
                 1 => station_info.supported_rates = parse_supported_rates(data),
                 3 => station_info.ds_parameter_set = Some(data[0]),
