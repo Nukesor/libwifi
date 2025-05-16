@@ -9,10 +9,11 @@ use nom::{
 
 use crate::frame::components::{
     AudioDevices, Cameras, Category, ChannelSwitchAnnouncment, ChannelSwitchMode, Computers,
-    Displays, DockingDevices, ExtendedCapabilities, GamingDevices, HTInformation, InputDevices,
-    MultimediaDevices, MultipleBSSID, NetworkInfrastructure, PrintersEtAl, RsnAkmSuite,
-    RsnCipherSuite, RsnInformation, StationInfo, Storage, SupportedRate, Telephone,
-    VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
+    Displays, DockingDevices, ExtendedCapabilities, GamingDevices, HTCapabilities, HTInformation,
+    InputDevices, MultimediaDevices, MultipleBSSID, NetworkInfrastructure, PrintersEtAl,
+    RsnAkmSuite, RsnCipherSuite, RsnInformation, StationInfo, Storage, SupportedRate, Telephone,
+    VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
+    WpsInformation, WpsSetupState,
 };
 
 /// Parse variable length and variable field information.
@@ -41,6 +42,8 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                     let ssid = String::from_utf8_lossy(data).to_string();
                     station_info.ssid = Some(ssid);
                     station_info.ssid_length = Some(length as usize);
+                    // if ssid is not utf8, can use the raw data.
+                    station_info.ssid_raw = Some(data[..length as usize].to_vec());
                 }
                 1 => station_info.supported_rates = parse_supported_rates(data),
                 3 => station_info.ds_parameter_set = Some(data[0]),
@@ -55,7 +58,7 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                 7 => station_info.country_info = Some(data.to_vec()),
                 32 => station_info.power_constraint = Some(data[0]),
                 37 => station_info.channel_switch = parse_channel_switch(data),
-                45 => station_info.ht_capabilities = Some(data.to_vec()),
+                45 => station_info.ht_capabilities = parse_ht_capabilities(data),
                 48 => {
                     if let Ok(rsn_info) = parse_rsn_information(data) {
                         station_info.rsn_information = Some(rsn_info)
@@ -73,7 +76,7 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                     }
                 }
                 127 => station_info.extended_capabilities = parse_extended_capabilities(data).ok(),
-                191 => station_info.vht_capabilities = Some(data.to_vec()),
+                191 => station_info.vht_capabilities = parse_vht_capabilities(data),
                 221 => {
                     // Vendor-specific tag
                     if data.len() >= 4 {
@@ -104,6 +107,16 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                                 data: vendor_data,
                             };
                             station_info.vendor_specific.push(vendor_specific_info);
+                        }
+                    }
+                }
+                255 => {
+                    let ext_element_id = data[0];
+                    match ext_element_id {
+                        35 => {
+                            station_info.he_capabilities = Some(data.to_vec());
+                        }
+                        _ => { // TODO: implement parsing for other extended element ids
                         }
                     }
                 }
@@ -270,14 +283,70 @@ fn parse_extended_capabilities(data: &[u8]) -> Result<ExtendedCapabilities, &'st
     })
 }
 
-fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
-    if data.is_empty() {
-        return Err("WPA Information data too short");
+pub fn parse_ht_capabilities(data: &[u8]) -> Option<HTCapabilities> {
+    if data.len() < 2 {
+        return None;
     }
+    let data = [data[0], data[1]];
+    let bits = u16::from_le_bytes(data);
+
+    macro_rules! bit {
+        ($b:expr) => {
+            bits & (1 << $b) != 0
+        };
+    }
+
+    Some(HTCapabilities {
+        ldpc_coding_capability: bit!(0),
+        supported_channel_width: bit!(1),
+        sm_power_save: (((bits >> 2) & 0x3) as u8).into(),
+        green_field: bit!(4),
+        short_gi_20_mhz: bit!(5),
+        short_gi_40_mhz: bit!(6),
+        tx_stbc: bit!(7),
+        rx_stbc: (((bits >> 8) & 0x3) as u8).into(),
+        delayed_block_ack: bit!(10),
+        max_amsdu_length: bit!(11),
+        dsss_support: bit!(12),
+        psmp_support: bit!(13),
+        forty_mhz_intolerant: bit!(14),
+        l_sig_tx_op_protection: bit!(15),
+    })
+}
+
+fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
+    if data.len() < 2 {
+        return Err("HT Information data too short");
+    }
+    let secondary_channel_offset_raw = data[1] & 0b11;
+    let supported_channel_width = (data[1] & 0b100) > 0;
 
     Ok(HTInformation {
         primary_channel: data[0],
-        other_data: data[1..].to_vec(),
+        secondary_channel_offset: secondary_channel_offset_raw.into(),
+        supported_channel_width,
+        other_data: data[2..].to_vec(),
+    })
+}
+
+fn parse_vht_capabilities(data: &[u8]) -> Option<VHTCapabilities> {
+    if data.is_empty() {
+        return None;
+    }
+
+    let maximum_mpdu_length = data[0] & 0b11;
+
+    let rx_ldpc = (data[0] & 1 << 4) > 0;
+
+    let short_gi_80mhz = (data[0] & (1 << 5)) > 0;
+    let short_gi_160mhz = (data[0] & (1 << 6)) > 0;
+
+    Some(VHTCapabilities {
+        maximum_mpdu_length,
+        rx_ldpc,
+        short_gi_80mhz,
+        short_gi_160mhz,
+        data: data.to_vec(),
     })
 }
 

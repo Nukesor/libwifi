@@ -32,7 +32,7 @@ fn flag_is_set(data: u8, bit: u8) -> bool {
 /// - **bit_3** `retry`: Set if this frame is a retransmission, maybe through the loss of an ACK.
 /// - **bit_4** `power_mgmt`: Indicates what power mode (`save` or `active`) the station will be in, once the frame has been sent.
 /// - **bit_5** `more_data`: Set by the AP to indicate that more frames are destined to a particular station that may be in power save mode.
-///                     These frames will be buffered at the AP, so it can be sent once the station decides to become `active`.
+///   These frames will be buffered at the AP, so it can be sent once the station decides to become `active`.
 /// - **bit_6** `protected`: Set if the frame body is encrypted (protected)
 /// - **bit_7** `order`: Set if the frame is being sent according to the _Strictly Ordered Class_.
 ///

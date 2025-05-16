@@ -21,21 +21,23 @@ pub struct StationInfo {
     pub extended_supported_rates: Option<Vec<SupportedRate>>,
     pub ssid: Option<String>,
     pub ssid_length: Option<usize>,
+    pub ssid_raw: Option<Vec<u8>>,
     pub ds_parameter_set: Option<u8>,
     pub ibss_parameter_set: Option<u16>,
     pub tim: Option<Vec<u8>>,
     pub country_info: Option<Vec<u8>>,
     pub power_constraint: Option<u8>,
-    pub ht_capabilities: Option<Vec<u8>>,
+    pub ht_capabilities: Option<HTCapabilities>,
     pub ht_information: Option<HTInformation>,
     pub multiple_bssid: Option<MultipleBSSID>,
-    pub vht_capabilities: Option<Vec<u8>>,
+    pub vht_capabilities: Option<VHTCapabilities>,
     pub rsn_information: Option<RsnInformation>,
     pub wpa_info: Option<WpaInformation>,
     pub wps_info: Option<WpsInformation>,
     pub vendor_specific: Vec<VendorSpecificInfo>,
     pub extended_capabilities: Option<ExtendedCapabilities>,
     pub channel_switch: Option<ChannelSwitchAnnouncment>,
+    pub he_capabilities: Option<Vec<u8>>,
     /// Contains all fields that aren't explicitly parsed by us.
     /// The format is Vec<(FieldId, PayloadBytes)>.
     ///
@@ -124,8 +126,9 @@ impl StationInfo {
         // Encode HT Capabilities (if present) - Tag Number: 45
         if let Some(ht_capabilities) = &self.ht_capabilities {
             bytes.push(45); // HT Capabilities tag number
-            bytes.push(ht_capabilities.len() as u8); // Length of HT Capabilities
-            bytes.extend(ht_capabilities);
+            let data = ht_capabilities.encode();
+            bytes.push(data.len() as u8); // Length of HT Capabilities
+            bytes.extend(data);
         }
 
         // Encode HT Information (if present) - Tag Number: 61
@@ -147,8 +150,8 @@ impl StationInfo {
         // Encode VHT Capabilities (if present) - Tag Number: 191
         if let Some(vht_capabilities) = &self.vht_capabilities {
             bytes.push(191); // VHT Capabilities tag number
-            bytes.push(vht_capabilities.len() as u8); // Length of VHT Capabilities
-            bytes.extend(vht_capabilities);
+            bytes.push(vht_capabilities.data.len() as u8); // Length of VHT Capabilities
+            bytes.extend(&vht_capabilities.data);
         }
 
         // Encode RSN Information (if present) - Tag Number: 48
@@ -806,8 +809,89 @@ impl RsnCipherSuite {
 }
 
 #[derive(Debug, Clone)]
+pub struct HTCapabilities {
+    pub ldpc_coding_capability: bool,
+    /// is 20/40Mhz
+    pub supported_channel_width: bool,
+    pub sm_power_save: SmPowerSave,
+    pub green_field: bool,
+    pub short_gi_20_mhz: bool,
+    pub short_gi_40_mhz: bool,
+    pub tx_stbc: bool,
+    pub rx_stbc: RxStbc,
+    pub delayed_block_ack: bool,
+    pub max_amsdu_length: bool,
+    pub dsss_support: bool,
+    pub psmp_support: bool,
+    pub forty_mhz_intolerant: bool,
+    /// L-SIG TXOP protection
+    pub l_sig_tx_op_protection: bool,
+}
+
+impl HTCapabilities {
+    pub fn encode(&self) -> Vec<u8> {
+        let mut b = BitVec::<usize, Lsb0>::repeat(false, 16);
+        b.set(0, self.ldpc_coding_capability);
+        b.set(1, self.supported_channel_width);
+        b[2..4].store_le::<u8>(self.sm_power_save as u8);
+        b.set(4, self.green_field);
+        b.set(5, self.short_gi_20_mhz);
+        b.set(6, self.short_gi_40_mhz);
+        b.set(7, self.tx_stbc);
+        b[8..10].store_le::<u8>(self.rx_stbc as u8);
+        b.set(10, self.delayed_block_ack);
+        b.set(11, self.max_amsdu_length);
+        b.set(12, self.dsss_support);
+        b.set(13, self.psmp_support);
+        b.set(14, self.forty_mhz_intolerant);
+        b.set(15, self.l_sig_tx_op_protection);
+
+        // Remove trailing zeros and convert to [u8], then vec
+        vec![b[0..b.len() - b.trailing_zeros()].load_le::<u8>()]
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum SmPowerSave {
+    Static = 0,
+    Dynamic = 1,
+    Disabled = 3,
+}
+
+impl From<u8> for SmPowerSave {
+    fn from(value: u8) -> Self {
+        match value {
+            0 => Self::Static,
+            1 => Self::Dynamic,
+            _ => Self::Disabled,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum RxStbc {
+    None = 0,
+    STBC1Stream = 1,
+    STBC2Stream = 2,
+    STBC3Stream = 3,
+}
+
+impl From<u8> for RxStbc {
+    fn from(value: u8) -> Self {
+        match value {
+            1 => Self::STBC1Stream,
+            2 => Self::STBC2Stream,
+            3 => Self::STBC3Stream,
+            _ => Self::None,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct HTInformation {
     pub primary_channel: u8,
+    pub secondary_channel_offset: SecondaryChannelOffset,
+    pub supported_channel_width: bool,
     pub other_data: Vec<u8>, // TODO
 }
 
@@ -815,9 +899,41 @@ impl HTInformation {
     pub fn encode(&self) -> Vec<u8> {
         let mut data: Vec<u8> = Vec::new();
         data.push(self.primary_channel);
+
+        let mut bit = self.secondary_channel_offset as u8;
+        if self.supported_channel_width {
+            bit |= 1 << 2;
+        }
+        data.push(bit);
         data.extend(self.other_data.clone());
         data
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum SecondaryChannelOffset {
+    None = 0,
+    Below = 1,
+    Above = 3,
+}
+
+impl From<u8> for SecondaryChannelOffset {
+    fn from(value: u8) -> Self {
+        match value {
+            1 => Self::Above,
+            3 => Self::Below,
+            _ => Self::None,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct VHTCapabilities {
+    pub maximum_mpdu_length: u8,
+    pub rx_ldpc: bool,
+    pub short_gi_80mhz: bool,
+    pub short_gi_160mhz: bool,
+    pub data: Vec<u8>, // TODO
 }
 
 #[derive(Debug, Clone)]
