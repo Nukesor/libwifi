@@ -36,6 +36,7 @@ pub struct StationInfo {
     pub vendor_specific: Vec<VendorSpecificInfo>,
     pub extended_capabilities: Option<ExtendedCapabilities>,
     pub channel_switch: Option<ChannelSwitchAnnouncment>,
+    pub he_capabilities: Option<Vec<u8>>,
     /// Contains all fields that aren't explicitly parsed by us.
     /// The format is Vec<(FieldId, PayloadBytes)>.
     ///

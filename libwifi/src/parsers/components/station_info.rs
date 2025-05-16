@@ -107,6 +107,16 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                         }
                     }
                 }
+                255 => {
+                    let ext_element_id = data[0];
+                    match ext_element_id {
+                        35 => {
+                            station_info.he_capabilities = Some(data.to_vec());
+                        }
+                        _ => { // TODO: implement parsing for other extended element ids
+                        }
+                    }
+                }
                 _ => {
                     station_info.data.push((element_id, data.to_vec()));
                 }
