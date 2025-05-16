@@ -849,7 +849,7 @@ impl HTCapabilities {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SmPowerSave {
     Static = 0,
     Dynamic = 1,
@@ -866,7 +866,7 @@ impl From<u8> for SmPowerSave {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RxStbc {
     None = 0,
     STBC1Stream = 1,
@@ -908,7 +908,7 @@ impl HTInformation {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SecondaryChannelOffset {
     None = 0,
     Below = 1,
