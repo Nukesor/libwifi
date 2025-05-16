@@ -13,6 +13,6 @@ pub use station_info::{
     Displays, DockingDevices, ExtendedCapabilities, GamingDevices, HTCapabilities, HTInformation,
     InputDevices, MultimediaDevices, MultipleBSSID, NetworkInfrastructure, PrintersEtAl,
     RsnAkmSuite, RsnCipherSuite, RsnInformation, RxStbc, SecondaryChannelOffset, SmPowerSave,
-    StationInfo, Storage, SupportedRate, Telephone, VendorSpecificInfo, WpaAkmSuite,
-    WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
+    StationInfo, Storage, SupportedRate, Telephone, VHTCapabilities, VendorSpecificInfo,
+    WpaAkmSuite, WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
 };

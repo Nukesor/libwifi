@@ -12,7 +12,8 @@ use crate::frame::components::{
     Displays, DockingDevices, ExtendedCapabilities, GamingDevices, HTCapabilities, HTInformation,
     InputDevices, MultimediaDevices, MultipleBSSID, NetworkInfrastructure, PrintersEtAl,
     RsnAkmSuite, RsnCipherSuite, RsnInformation, StationInfo, Storage, SupportedRate, Telephone,
-    VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation, WpsInformation, WpsSetupState,
+    VHTCapabilities, VendorSpecificInfo, WpaAkmSuite, WpaCipherSuite, WpaInformation,
+    WpsInformation, WpsSetupState,
 };
 
 /// Parse variable length and variable field information.
@@ -75,7 +76,7 @@ pub fn parse_station_info(mut input: &[u8]) -> IResult<&[u8], StationInfo> {
                     }
                 }
                 127 => station_info.extended_capabilities = parse_extended_capabilities(data).ok(),
-                191 => station_info.vht_capabilities = Some(data.to_vec()),
+                191 => station_info.vht_capabilities = parse_vht_capabilities(data),
                 221 => {
                     // Vendor-specific tag
                     if data.len() >= 4 {
@@ -325,6 +326,27 @@ fn parse_ht_information(data: &[u8]) -> Result<HTInformation, &'static str> {
         secondary_channel_offset: secondary_channel_offset_raw.into(),
         supported_channel_width,
         other_data: data[2..].to_vec(),
+    })
+}
+
+fn parse_vht_capabilities(data: &[u8]) -> Option<VHTCapabilities> {
+    if data.is_empty() {
+        return None;
+    }
+
+    let maximum_mpdu_length = data[0] & 0b11;
+
+    let rx_ldpc = (data[0] & 1 << 4) > 0;
+
+    let short_gi_80mhz = (data[0] & (1 << 5)) > 0;
+    let short_gi_160mhz = (data[0] & (1 << 6)) > 0;
+
+    Some(VHTCapabilities {
+        maximum_mpdu_length,
+        rx_ldpc,
+        short_gi_80mhz,
+        short_gi_160mhz,
+        data: data.to_vec(),
     })
 }
 

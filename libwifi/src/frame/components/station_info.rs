@@ -30,7 +30,7 @@ pub struct StationInfo {
     pub ht_capabilities: Option<HTCapabilities>,
     pub ht_information: Option<HTInformation>,
     pub multiple_bssid: Option<MultipleBSSID>,
-    pub vht_capabilities: Option<Vec<u8>>,
+    pub vht_capabilities: Option<VHTCapabilities>,
     pub rsn_information: Option<RsnInformation>,
     pub wpa_info: Option<WpaInformation>,
     pub wps_info: Option<WpsInformation>,
@@ -150,8 +150,8 @@ impl StationInfo {
         // Encode VHT Capabilities (if present) - Tag Number: 191
         if let Some(vht_capabilities) = &self.vht_capabilities {
             bytes.push(191); // VHT Capabilities tag number
-            bytes.push(vht_capabilities.len() as u8); // Length of VHT Capabilities
-            bytes.extend(vht_capabilities);
+            bytes.push(vht_capabilities.data.len() as u8); // Length of VHT Capabilities
+            bytes.extend(&vht_capabilities.data);
         }
 
         // Encode RSN Information (if present) - Tag Number: 48
@@ -925,6 +925,15 @@ impl From<u8> for SecondaryChannelOffset {
             _ => Self::None,
         }
     }
+}
+
+#[derive(Debug, Clone)]
+pub struct VHTCapabilities {
+    pub maximum_mpdu_length: u8,
+    pub rx_ldpc: bool,
+    pub short_gi_80mhz: bool,
+    pub short_gi_160mhz: bool,
+    pub data: Vec<u8>, // TODO
 }
 
 #[derive(Debug, Clone)]
