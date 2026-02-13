@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 - Bump MSRV to 1.86 for test tooling
+- Bump `randr` to `0.10`
 
 ## [0.4.6] - 2025-03-20
 
