@@ -61,10 +61,10 @@ pub fn parse_authentication_frame(
         };
     } else {
         // Parse station info (extended capabilities) if present
-        if !input.is_empty() {
-            if let Ok((_input, info)) = parse_station_info(input) {
-                station_info = Some(info);
-            }
+        if !input.is_empty()
+            && let Ok((_input, info)) = parse_station_info(input)
+        {
+            station_info = Some(info);
         }
     }
 
