@@ -14,8 +14,8 @@ libfuzzer-sys = "0.4"
 path = "../libwifi"
 
 [[bin]]
+bench = false
+doc = false
 name = "parse_frame"
 path = "fuzz_targets/parse_frame.rs"
 test = false
-doc = false
-bench = false
