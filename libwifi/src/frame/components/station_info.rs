@@ -1116,7 +1116,7 @@ impl ExtendedCapabilities {
         b.set(38, self.tdls_prohibited);
         b.set(39, self.tdls_channel_switching_prohibited);
         b.set(40, self.reject_unadmitted_frame);
-        b[41..43].store_le::<u8>(self.service_interval_granularity);
+        b[41..44].store_le::<u8>(self.service_interval_granularity);
         b.set(44, self.identifier_location);
         b.set(45, self.uapsd_coexistence);
         b.set(46, self.wnm_notification);
@@ -1136,7 +1136,7 @@ impl ExtendedCapabilities {
         b.set(60, self.protected_qload_report);
         b.set(61, self.tdls_wider_bandwidth);
         b.set(62, self.operating_mode_notification);
-        b[63..64].store_le::<u8>(self.max_number_of_msdus_in_amsdu);
+        b[63..65].store_le::<u8>(self.max_number_of_msdus_in_amsdu);
         b.set(65, self.channel_schedule_management);
         b.set(66, self.geodatabase_inband_enabling_signal);
         b.set(67, self.network_channel_control);
@@ -1163,7 +1163,15 @@ impl ExtendedCapabilities {
         //b.set(88]=self.reserved88);
         b.set(89, self.twt_parameters_range_support);
 
-        // Remove trailing zeros and convert to [u8], then vec
-        vec![b[0..b.len() - b.trailing_zeros()].load_le::<u8>()]
+        // Remove trailing zeros and convert to bytes
+        let significant_bits = b.len() - b.trailing_zeros();
+        let bytes_needed = (significant_bits + 7) / 8;
+        let mut result = Vec::with_capacity(bytes_needed);
+        for i in 0..bytes_needed {
+            let start = i * 8;
+            let end = std::cmp::min(start + 8, b.len());
+            result.push(b[start..end].load_le::<u8>());
+        }
+        result
     }
 }
