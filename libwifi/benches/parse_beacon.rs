@@ -1,5 +1,5 @@
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
-use rand::{Rng, rng};
+use rand::{RngExt, rng};
 
 use libwifi::parse_frame;
 
