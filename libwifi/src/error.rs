@@ -35,14 +35,14 @@ impl From<nom::Err<nom::error::Error<&[u8]>>> for Error {
             },
             nom::Err::Failure(error) => Error::Failure(
                 format!(
-                    "An error occured while parsing the data: nom::ErrorKind is {:?}",
+                    "An error occurred while parsing the data: nom::ErrorKind is {:?}",
                     error.code
                 ),
                 error.input.to_vec(),
             ),
             nom::Err::Error(error) => Error::Failure(
                 format!(
-                    "An error occured while parsing the data: nom::ErrorKind is {:?}",
+                    "An error occurred while parsing the data: nom::ErrorKind is {:?}",
                     error.code
                 ),
                 error.input.to_vec(),
